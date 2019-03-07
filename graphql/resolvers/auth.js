@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 const Family = require("../../models/Family");
-const { transformUser } = require("./populate");
+const { transformUser } = require("./authLoaders");
 
 module.exports = {
   createUser: async args => {
@@ -25,28 +25,53 @@ module.exports = {
         password: hashedPassword,
         name
       });
-      let createdUser = await newUser.save();
+      const createdUser = await newUser.save();
 
       if (isFamilyCreating) {
+        const existingFamily = await Family.findOne({
+          creator: createdUser.id
+        });
+        if (existingFamily) {
+          throw new Error("Już założyłeś rodzinę");
+        }
         const family = new Family({
           name: familyName,
           creator: createdUser.id
         });
         const createdFamily = await family.save();
-        createdUser = await User.findOneAndUpdate(
-          { _id: createdFamily.creator },
-          { family: createdFamily.id }
+        const updatedUser = await User.findByIdAndUpdate(
+          createdFamily.creator,
+          { family: createdFamily.id },
+          { new: true }
         );
+        return transformUser(updatedUser);
       }
       return transformUser(createdUser);
     } catch (err) {
       throw err;
     }
   },
+  login: async ({ email, password }) => {
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error("Nieprawidłowe dane logowania");
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new Error("Nieprawidłowe dane logowania");
+    }
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      require("../../config/keys").secret,
+      {
+        expiresIn: "1h"
+      }
+    );
+    return { userId: user.id, token, tokenExpiration: 1 };
+  },
   user: async ({ email }) => {
     try {
       const user = await User.findOne({ email });
-      console.log(user);
       return transformUser(user);
     } catch (err) {
       throw err;

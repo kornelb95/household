@@ -1,4 +1,4 @@
-const { buildSchema, GraphQLID } = require("graphql");
+const { buildSchema } = require("graphql");
 
 module.exports = buildSchema(`
 
@@ -34,7 +34,7 @@ input CreateUserInput {
 
 type RootQuery {
   login(email: String!, password: String!): AuthData!
-  user(email: String!): User!
+  user(email: String!): User
 }
 
 type RootMutation {

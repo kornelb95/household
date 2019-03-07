@@ -1,21 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const graphqlHttp = require("express-graphql");
 const mongoose = require("mongoose");
 const app = express();
 const graphQLSchema = require("./graphql/schema");
 const graphQLResolvers = require("./graphql/resolvers");
-
+mongoose.set("useFindAndModify", false);
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  next();
-});
+app.use(cors());
 app.use(
   "/graphql",
   graphqlHttp({
