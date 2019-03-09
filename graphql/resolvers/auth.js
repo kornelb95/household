@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 const Family = require("../../models/Family");
-const { transformUser } = require("./authLoaders");
+const { transformUser } = require("./loaders");
 
 module.exports = {
   createUser: async args => {
@@ -69,8 +69,11 @@ module.exports = {
     );
     return { userId: user.id, token, tokenExpiration: 1 };
   },
-  user: async ({ email }) => {
+  user: async ({ email }, req) => {
     try {
+      if (!req.isAuth) {
+        throw new Error("Unauthenticated!");
+      }
       const user = await User.findOne({ email });
       return transformUser(user);
     } catch (err) {

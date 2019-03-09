@@ -2,9 +2,9 @@ const DataLoader = require("dataloader");
 
 const User = require("../../models/User");
 const Family = require("../../models/Family");
+const Task = require("../../models/Task");
 
 const userLoader = new DataLoader(userIds => {
-  console.log(userIds);
   return userBatch(userIds);
 });
 
@@ -15,7 +15,6 @@ const familyLoader = new DataLoader(familyIds => {
 const userBatch = async userIds => {
   try {
     const users = await User.find({ _id: { $in: userIds } });
-    console.log(users);
     users.sort((a, b) => {
       return (
         userIds.indexOf(a._id.toString()) - userIds.indexOf(b._id.toString())
@@ -32,7 +31,6 @@ const userBatch = async userIds => {
 const family = async familyId => {
   try {
     const family = await familyLoader.load(familyId.toString());
-    console.log(family._doc.members);
     return {
       ...family._doc,
       _id: family.id,
@@ -45,12 +43,32 @@ const family = async familyId => {
 };
 
 const transformUser = user => {
-  console.log("tu");
   return {
     ...user._doc,
     _id: user.id,
     family: family.bind(this, user.family)
   };
 };
-
+const transformFamily = family => {
+  return {
+    ...family._doc,
+    _id: family.id,
+    creator: () => userLoader.load(family._doc.creator.toString()),
+    members: () => userLoader.loadMany(family._doc.members)
+  };
+};
+const transformTask = task => {
+  return {
+    ...task._doc,
+    _id: task.id,
+    deadline: new Date(task.deadline).toISOString(),
+    creator: () => userLoader.load(task._doc.creator.toString()),
+    executor: () => userLoader.load(task._doc.executor.toString()),
+    family: family.bind(this, task.family),
+    createdAt: new Date(task.createdAt).toISOString(),
+    updatedAt: new Date(task.updatedAt).toISOString()
+  };
+};
 exports.transformUser = transformUser;
+exports.transformFamily = transformFamily;
+exports.transformTask = transformTask;
