@@ -19,6 +19,7 @@ app.use(
     graphiql: true
   })
 );
+app.get("/cos", (req, res) => res.json({ user: "tdsad" }));
 const PORT = 8000;
 mongoose
   .connect(

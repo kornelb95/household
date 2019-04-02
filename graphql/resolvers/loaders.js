@@ -46,7 +46,7 @@ const transformUser = user => {
   return {
     ...user._doc,
     _id: user.id,
-    family: family.bind(this, user.family)
+    family: user.family === null ? null : family.bind(this, user.family)
   };
 };
 const transformFamily = family => {

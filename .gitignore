@@ -1,2 +1,4 @@
 /node_modules
 nodemon.json
+/mobile/.expo
+/mobile/node_modules

@@ -23,7 +23,8 @@ module.exports = {
       const newUser = new User({
         email,
         password: hashedPassword,
-        name
+        name,
+        family: null
       });
       const createdUser = await newUser.save();
 
@@ -61,7 +62,12 @@ module.exports = {
       throw new Error("Nieprawidłowe dane logowania");
     }
     const token = jwt.sign(
-      { userId: user.id, email: user.email },
+      {
+        userId: user.id,
+        email: user.email,
+        name: user.name,
+        family: user.family
+      },
       require("../../config/keys").secret,
       {
         expiresIn: "1h"
@@ -75,6 +81,17 @@ module.exports = {
         throw new Error("Unauthenticated!");
       }
       const user = await User.findOne({ email });
+      return transformUser(user);
+    } catch (err) {
+      throw err;
+    }
+  },
+  getUserById: async ({ id }, req) => {
+    try {
+      if (!req.isAuth) {
+        throw new Error("Unauthenticated!");
+      }
+      const user = await User.findById(id);
       return transformUser(user);
     } catch (err) {
       throw err;

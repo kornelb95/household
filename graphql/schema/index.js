@@ -54,6 +54,7 @@ input CreateTaskInput {
 type RootQuery {
   login(email: String!, password: String!): AuthData!
   user(email: String!): User
+  getUserById(id: String!): User
   getFamilyTasks(familyID: String!): [Task!]
 }
 
