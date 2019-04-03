@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { connect } from "react-redux";
-class ChoresScreen extends Component {
+class ArguesScreen extends Component {
   state = {};
   render() {
     return (
@@ -127,4 +127,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ChoresScreen);
+)(ArguesScreen);

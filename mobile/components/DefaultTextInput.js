@@ -1,31 +1,26 @@
 import React from "react";
-import { TextInput, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
+import { TextInput, Colors } from "react-native-paper";
 
 const defaultInput = props => (
   <TextInput
-    underlineColorAndroid="transparent"
-    placeholderTextColor="#fff"
     {...props}
-    style={[
-      styles.input,
-      props.style,
-      !props.valid && props.touched ? styles.invalid : null
-    ]}
+    style={[styles.input, props.style]}
+    error={!props.valid && props.touched}
+    mode="flat"
+    label={props.placeholder}
   />
 );
 
 const styles = StyleSheet.create({
   input: {
-    width: "100%",
-    borderBottomWidth: 1,
-    borderColor: "#eee",
-    padding: 5,
+    width: "80%",
+    height: 60,
+    justifyContent: "center",
+    alignSelf: "center",
     marginHorizontal: 10,
     marginVertical: 10,
     color: "#fff"
-  },
-  invalid: {
-    borderColor: "red"
   }
 });
 

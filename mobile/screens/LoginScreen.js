@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import {
   View,
   Text,
-  Button,
   StyleSheet,
   KeyboardAvoidingView,
   ActivityIndicator
 } from "react-native";
+import { Button } from "react-native-paper";
 import DefaultTextInput from "../components/DefaultTextInput";
 import { connect } from "react-redux";
 import { login } from "../store/actions/auth";
@@ -64,7 +64,6 @@ class LoginScreen extends Component {
             ) : null}
             <DefaultTextInput
               value={this.state.inputs.email.value}
-              style={styles.input}
               placeholder="Wpisz adres email"
               keyboardType="email-address"
               onChangeText={value => this.updateStateInput("email", value)}
@@ -73,7 +72,6 @@ class LoginScreen extends Component {
             />
             <DefaultTextInput
               value={this.state.inputs.password.value}
-              style={styles.input}
               secureTextEntry
               placeholder="Wpisz hasło"
               onChangeText={value => this.updateStateInput("password", value)}
@@ -86,13 +84,12 @@ class LoginScreen extends Component {
               <ActivityIndicator />
             ) : (
               <Button
-                // disabled={
-                //   !this.state.inputs.email.valid ||
-                //   !this.state.inputs.password.valid
-                // }
-                title="Zaloguj"
+                mode="contained"
+                color="#D916AB"
                 onPress={() => this.props.onLogin(this.state.inputs)}
-              />
+              >
+                Zaloguj
+              </Button>
             )}
           </View>
         </View>
@@ -104,8 +101,9 @@ class LoginScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-around",
-    backgroundColor: "#4BC9C6"
+    paddingTop: "20%",
+    // justifyContent: "center",
+    backgroundColor: "#12B2AF"
   },
   errorText: {
     paddingVertical: 10,
@@ -113,18 +111,11 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    marginTop: 30
   },
   inputContainer: {
     justifyContent: "center"
-  },
-  input: {
-    width: "100%",
-    borderBottomWidth: 1,
-    borderColor: "#eee",
-    padding: 5,
-
-    color: "#fff"
   }
 });
 const mapStateToProps = state => {

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { View, Text, Button, StyleSheet, ImageBackground } from "react-native";
+import { View, Text, StyleSheet, ImageBackground } from "react-native";
+import { Button } from "react-native-paper";
 class MainScreen extends Component {
   static navigationOptions = {
     header: null
@@ -20,15 +21,21 @@ class MainScreen extends Component {
           <View style={styles.buttonsContainer}>
             <View style={styles.button}>
               <Button
-                title="Załóż konto"
+                mode="contained"
+                color="#D916AB"
                 onPress={() => this.props.navigation.navigate("SignupScreen")}
-              />
+              >
+                Załóż konto
+              </Button>
             </View>
             <View style={styles.button}>
               <Button
-                title="Zaloguj się"
+                mode="contained"
+                color="#D916AB"
                 onPress={() => this.props.navigation.navigate("LoginScreen")}
-              />
+              >
+                Zaloguj się
+              </Button>
             </View>
           </View>
         </View>
