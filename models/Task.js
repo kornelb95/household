@@ -15,13 +15,10 @@ const taskSchema = new Schema(
       type: Date,
       required: true
     },
-    creator: {
-      type: Schema.Types.ObjectId,
-      ref: "User"
-    },
     executor: {
       type: Schema.Types.ObjectId,
-      ref: "User"
+      ref: "User",
+      default: null
     },
     family: {
       type: Schema.Types.ObjectId,

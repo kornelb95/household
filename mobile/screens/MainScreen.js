@@ -1,10 +1,15 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, ImageBackground } from "react-native";
 import { Button } from "react-native-paper";
+import { connect } from "react-redux";
+import { authAutoSignIn } from "../store/actions/auth";
 class MainScreen extends Component {
   static navigationOptions = {
     header: null
   };
+  componentDidMount() {
+    this.props.onAutoSignIn();
+  }
   render() {
     return (
       <ImageBackground
@@ -72,5 +77,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 20
   }
 });
-
-export default MainScreen;
+const mapDispatchToProps = dispatch => {
+  return {
+    onAutoSignIn: () => dispatch(authAutoSignIn())
+  };
+};
+export default connect(
+  null,
+  mapDispatchToProps
+)(MainScreen);

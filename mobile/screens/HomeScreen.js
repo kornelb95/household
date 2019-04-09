@@ -1,55 +1,120 @@
 import React, { Component } from "react";
+import { View, StyleSheet, Text, ScrollView } from "react-native";
 import {
-  View,
-  StyleSheet,
   ActivityIndicator,
-  Text,
-  ScrollView
-} from "react-native";
+  TouchableRipple,
+  Button,
+  Paragraph,
+  Dialog,
+  Portal,
+  withTheme,
+  Divider,
+  TextInput
+} from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { connect } from "react-redux";
+import Header from "../components/Header";
+
 class HomeScreen extends Component {
-  state = {};
+  state = {
+    visible: false,
+    pin: ""
+  };
+
+  _showDialog = () => this.setState({ visible: true });
+
+  _hideDialog = () => this.setState({ visible: false });
   render() {
     return (
       <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>FamilyConnector</Text>
-            <Ionicons
-              style={styles.headerIcon}
-              name="md-settings"
-              color="white"
-              size={32}
-            />
+        {this.props.isLoading ? (
+          <View style={styles.container}>
+            <ActivityIndicator />
           </View>
-          <View style={styles.userDataArea}>
-            <Text style={styles.userName}>{this.props.loggedUser.name}</Text>
-            <Ionicons
-              style={styles.connectedIcon}
-              name="ios-link"
-              color="white"
-              size={32}
-            />
+        ) : (
+          <View style={styles.container}>
+            <Header />
+            <View style={styles.userDataArea}>
+              <View style={{ flex: 1, paddingTop: 20 }}>
+                <Text style={styles.userName}>
+                  {this.props.loggedUser.name}
+                </Text>
+                <Text
+                  style={[
+                    styles.userName,
+                    { fontSize: 20, alignItems: "flex-start" }
+                  ]}
+                >
+                  {this.props.loggedUser.family &&
+                    this.props.loggedUser.family.name}
+                </Text>
+              </View>
+              <TouchableRipple
+                onPress={() => this._showDialog()}
+                style={styles.connectedIcon}
+              >
+                <Ionicons
+                  style={{ lineHeight: 120, textAlign: "center" }}
+                  name="ios-link"
+                  color="white"
+                  size={32}
+                />
+              </TouchableRipple>
+              <View>
+                <Portal>
+                  <Dialog
+                    visible={this.state.visible}
+                    onDismiss={this._hideDialog}
+                  >
+                    <Dialog.Title
+                      style={{ color: "#000", textAlign: "center" }}
+                    >
+                      Dołącz do grupy i zacznij zabawę
+                    </Dialog.Title>
+                    <Divider />
+                    <Dialog.Content>
+                      <Paragraph style={{ color: "#000" }}>
+                        Aby dołączyć do grupy, wpisz numer PIN od założyciela.
+                      </Paragraph>
+                      <TextInput
+                        label="kod PIN grupy"
+                        value={this.state.pin}
+                        onChangeText={pin => this.setState({ pin })}
+                        style={{ marginVertical: 20 }}
+                      />
+                      <Button
+                        mode="contained"
+                        onPress={() => console.log("dass")}
+                      >
+                        Zatwierdź
+                      </Button>
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                      <Button onPress={this._hideDialog}>Zamknij</Button>
+                    </Dialog.Actions>
+                  </Dialog>
+                </Portal>
+              </View>
+            </View>
+            <Text
+              style={{
+                width: "100%",
+                textAlign: "center",
+                fontSize: 32,
+                color: "#fff",
+                lineHeight: 80
+              }}
+            >
+              Statystyki
+            </Text>
+            <View style={styles.statsContainer}>
+              <View style={styles.memberStats} />
+              <View style={styles.memberStats} />
+              <View style={styles.memberStats} />
+              <View style={styles.memberStats} />
+            </View>
           </View>
-          <Text
-            style={{
-              width: "100%",
-              textAlign: "center",
-              fontSize: 32,
-              color: "#fff",
-              lineHeight: 80
-            }}
-          >
-            Statystyki
-          </Text>
-          <View style={styles.statsContainer}>
-            <View style={styles.memberStats} />
-            <View style={styles.memberStats} />
-            <View style={styles.memberStats} />
-            <View style={styles.memberStats} />
-          </View>
-        </View>
+        )}
       </ScrollView>
     );
   }
@@ -61,28 +126,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: "10%",
     backgroundColor: "#238e8c"
-  },
-  header: {
-    alignItems: "center",
-    flexDirection: "row",
-    height: 80,
-    width: "100%",
-    borderBottomColor: "#ddd",
-    borderBottomWidth: 4,
-    paddingHorizontal: 10,
-    justifyContent: "center"
-  },
-  headerText: {
-    color: "#ffffff",
-    fontSize: 20,
-    fontWeight: "bold",
-    flex: 1,
-    lineHeight: 80
-  },
-  headerIcon: {
-    alignSelf: "center",
-    alignContent: "flex-end",
-    lineHeight: 80
   },
   userDataArea: {
     height: 120,
@@ -104,10 +147,10 @@ const styles = StyleSheet.create({
   },
   connectedIcon: {
     width: "20%",
-    lineHeight: 120,
+    // lineHeight: 120,
     borderLeftColor: "white",
-    borderLeftWidth: 4,
-    textAlign: "center"
+    borderLeftWidth: 4
+    // textAlign: "center"
   },
   statsContainer: {
     minHeight: 200,
@@ -131,10 +174,8 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
+const mapDispatchToProps = dispatch => {};
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
-)(HomeScreen);
+  null
+)(withTheme(HomeScreen));

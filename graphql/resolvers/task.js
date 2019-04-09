@@ -2,12 +2,11 @@ const Task = require("../../models/Task");
 const { transformTask } = require("./loaders");
 module.exports = {
   createTask: async args => {
-    const { title, points, deadline, creatorID, familyID } = args.taskInput;
+    const { title, points, deadline, familyID } = args.taskInput;
     const task = new Task({
       title,
       points: +points,
       deadline: deadline,
-      creator: creatorID,
       family: familyID
     });
     try {

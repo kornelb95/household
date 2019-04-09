@@ -9,22 +9,14 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { connect } from "react-redux";
+import Header from "../components/Header";
 class ArguesScreen extends Component {
   state = {};
   render() {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>FamilyConnector</Text>
-
-            <Ionicons
-              style={styles.headerIcon}
-              name="md-settings"
-              color="white"
-              size={32}
-            />
-          </View>
+          <Header />
           <View style={styles.choresArea}>
             <Text style={styles.addTaskText}>Dodaj zadanie</Text>
             <TouchableHighlight
@@ -62,28 +54,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: "10%",
     backgroundColor: "#238e8c"
-  },
-  header: {
-    alignItems: "center",
-    flexDirection: "row",
-    height: 80,
-    width: "100%",
-    borderBottomColor: "#ddd",
-    borderBottomWidth: 4,
-    paddingHorizontal: 10,
-    justifyContent: "center"
-  },
-  headerText: {
-    color: "#ffffff",
-    fontSize: 20,
-    fontWeight: "bold",
-    flex: 1,
-    lineHeight: 80
-  },
-  headerIcon: {
-    alignSelf: "center",
-    alignContent: "flex-end",
-    lineHeight: 80
   },
   choresArea: {
     height: 120,

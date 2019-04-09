@@ -7,7 +7,6 @@ type Task {
   title: String!
   points: Int!
   deadline: String!
-  creator: User!
   executor: User
   family: Family!
   finished: Boolean!
@@ -48,7 +47,6 @@ input CreateTaskInput {
   title: String!
   points: Int!
   deadline: String!
-  creatorID: String!
   familyID: String!
 }
 type RootQuery {

@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 const Family = require("../../models/Family");
-const { transformUser } = require("./loaders");
+const { transformUser, transformFamily } = require("./loaders");
 
 module.exports = {
   createUser: async args => {
@@ -61,12 +61,16 @@ module.exports = {
     if (!isMatch) {
       throw new Error("Nieprawidłowe dane logowania");
     }
+    let family = null;
+    if (user.family !== null) {
+      family = await Family.findById(user.family);
+    }
     const token = jwt.sign(
       {
         userId: user.id,
         email: user.email,
         name: user.name,
-        family: user.family
+        family: family !== null ? transformFamily(family) : null
       },
       require("../../config/keys").secret,
       {
@@ -88,9 +92,9 @@ module.exports = {
   },
   getUserById: async ({ id }, req) => {
     try {
-      if (!req.isAuth) {
-        throw new Error("Unauthenticated!");
-      }
+      // if (!req.isAuth) {
+      //   throw new Error("Unauthenticated!");
+      // }
       const user = await User.findById(id);
       return transformUser(user);
     } catch (err) {

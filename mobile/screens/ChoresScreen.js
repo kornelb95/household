@@ -2,54 +2,123 @@ import React, { Component } from "react";
 import {
   View,
   StyleSheet,
-  ActivityIndicator,
   Text,
   ScrollView,
   TouchableHighlight
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import moment from "moment";
 import { connect } from "react-redux";
+import { List, TouchableRipple } from "react-native-paper";
+import { fetchAllFamilyTasks, bookTask } from "../store/actions/tasks";
+import Header from "../components/Header";
 class ChoresScreen extends Component {
   state = {};
+  componentDidMount() {
+    if (this.props.loggedUser.family !== null) {
+      this.props.onFetchAllFamilyTasks(this.props.loggedUser.family._id);
+    }
+  }
+
   render() {
+    const myTasks = this.props.tasks.filter(task => {
+      if (task.executor !== null) {
+        return task.executor._id === this.props.loggedUser.userId;
+      }
+    });
+    const freeTasks = this.props.tasks.filter(task => task.executor === null);
     return (
       <ScrollView>
         <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>FamilyConnector</Text>
-
-            <Ionicons
-              style={styles.headerIcon}
-              name="md-settings"
-              color="white"
-              size={32}
-            />
-          </View>
+          <Header />
           <View style={styles.choresArea}>
             <Text style={styles.addTaskText}>Dodaj zadanie</Text>
-            <TouchableHighlight
-              onPress={() => this.props.navigation.navigate("addTaskModal")}
-              style={styles.addTaskIconWrapper}
-            >
-              <Ionicons
-                style={styles.addTaskIcon}
-                name="ios-add-circle"
-                color="white"
-                size={32}
-              />
-            </TouchableHighlight>
+            {this.props.loggedUser.family === null ? (
+              <View
+                style={[
+                  styles.addTaskIconWrapper,
+                  { width: "40%", paddingLeft: 15 }
+                ]}
+              >
+                <Text style={{ color: "red", fontSize: 18, fontWeight: "900" }}>
+                  Najpierw dołącz do rodziny.
+                </Text>
+              </View>
+            ) : (
+              <TouchableHighlight
+                onPress={() => this.props.navigation.navigate("addTaskModal")}
+                style={styles.addTaskIconWrapper}
+              >
+                <Ionicons
+                  style={styles.addTaskIcon}
+                  name="ios-add-circle"
+                  color="white"
+                  size={32}
+                />
+              </TouchableHighlight>
+            )}
           </View>
-          <Text
+          <View
             style={{
               width: "100%",
-              textAlign: "center",
-              fontSize: 32,
-              color: "#fff",
-              lineHeight: 80
+              alignSelf: "flex-start",
+              alignContent: "center"
             }}
           >
-            Twoje zadania
-          </Text>
+            <List.Accordion
+              title={`Zadania wolne (${freeTasks.length})`}
+              left={props => <List.Icon {...props} icon="bookmark" />}
+            >
+              {freeTasks.map(task => (
+                <List.Item
+                  description={moment(task.deadline).format("YYYY-MM-DD HH:mm")}
+                  right={props => (
+                    <View style={{ flexDirection: "row" }}>
+                      <TouchableRipple
+                        onPress={() =>
+                          this.props.onBookTask(
+                            task._id,
+                            this.props.loggedUser.userId
+                          )
+                        }
+                        rippleColor="rgba(0, 0, 0, .32)"
+                      >
+                        <List.Icon {...props} icon="launch" color="#D916AB" />
+                      </TouchableRipple>
+                      <TouchableRipple rippleColor="rgba(0, 0, 0, .32)">
+                        <List.Icon {...props} icon="delete" color="#D916AB" />
+                      </TouchableRipple>
+                    </View>
+                  )}
+                  key={task._id}
+                  title={`${task.title}: ${task.points} pkt`}
+                />
+              ))}
+            </List.Accordion>
+
+            <List.Accordion
+              title={`Moje zadania (${myTasks.length})`}
+              left={props => <List.Icon {...props} icon="assignment" />}
+            >
+              {myTasks.map(task => (
+                <List.Item
+                  description={moment(task.deadline).format("YYYY-MM-DD HH:mm")}
+                  right={props => (
+                    <View style={{ flexDirection: "row" }}>
+                      <TouchableRipple rippleColor="rgba(0, 0, 0, .32)">
+                        <List.Icon {...props} icon="launch" color="#D916AB" />
+                      </TouchableRipple>
+                      <TouchableRipple rippleColor="rgba(0, 0, 0, .32)">
+                        <List.Icon {...props} icon="delete" color="#D916AB" />
+                      </TouchableRipple>
+                    </View>
+                  )}
+                  key={task._id}
+                  title={`${task.title}: ${task.points} pkt`}
+                />
+              ))}
+            </List.Accordion>
+          </View>
         </View>
       </ScrollView>
     );
@@ -62,28 +131,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: "10%",
     backgroundColor: "#238e8c"
-  },
-  header: {
-    alignItems: "center",
-    flexDirection: "row",
-    height: 80,
-    width: "100%",
-    borderBottomColor: "#ddd",
-    borderBottomWidth: 4,
-    paddingHorizontal: 10,
-    justifyContent: "center"
-  },
-  headerText: {
-    color: "#ffffff",
-    fontSize: 20,
-    fontWeight: "bold",
-    flex: 1,
-    lineHeight: 80
-  },
-  headerIcon: {
-    alignSelf: "center",
-    alignContent: "flex-end",
-    lineHeight: 80
   },
   choresArea: {
     height: 120,
@@ -117,12 +164,16 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   return {
     loggedUser: state.auth.loggedUser,
-    isLoading: state.ui.isLoading
+    isLoading: state.ui.isLoading,
+    tasks: state.task.tasks
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return {
+    onFetchAllFamilyTasks: familyId => dispatch(fetchAllFamilyTasks(familyId)),
+    onBookTask: (taskId, executorId) => dispatch(bookTask(taskId, executorId))
+  };
 };
 export default connect(
   mapStateToProps,

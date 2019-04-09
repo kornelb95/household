@@ -62,8 +62,10 @@ const transformTask = task => {
     ...task._doc,
     _id: task.id,
     deadline: new Date(task.deadline).toISOString(),
-    creator: () => userLoader.load(task._doc.creator.toString()),
-    executor: () => userLoader.load(task._doc.executor.toString()),
+    executor: () =>
+      task._doc.executor === null
+        ? null
+        : userLoader.load(task._doc.executor.toString()),
     family: family.bind(this, task.family),
     createdAt: new Date(task.createdAt).toISOString(),
     updatedAt: new Date(task.updatedAt).toISOString()

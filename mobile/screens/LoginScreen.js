@@ -18,7 +18,7 @@ class LoginScreen extends Component {
   state = {
     inputs: {
       email: {
-        value: "kornelb95@gmail.com",
+        value: "korni007@gmail.com",
         valid: false,
         validationRules: {
           isEmail: true

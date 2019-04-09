@@ -14,6 +14,9 @@ const validator = (val, rules, connectedValue) => {
       case "notEmpty":
         isValid = isValid && notEmptyValidator(val);
         break;
+      case "notMinusValue":
+        isValid = isValid && notMinusValue(val);
+        break;
       default:
         isValid = true;
     }
@@ -39,5 +42,7 @@ const equalToValidator = (val, checkValue) => {
 const notEmptyValidator = val => {
   return val.trim() !== "";
 };
-
+const notMinusValue = val => {
+  return val > 0;
+};
 export default validator;
