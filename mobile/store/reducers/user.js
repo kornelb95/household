@@ -1,13 +1,14 @@
 import {
   AUTH_ERROR,
-  LOGIN,
+  LOGIN_AND_FETCH_FAMILY,
   AUTH_REMOVE_TOKEN,
   AUTH_SET_TOKEN,
-  FETCH_FAMILY_MEMBERS
+  JOIN_TO_FAMILY
 } from "../actions/actionTypes";
 const initialState = {
   error: "",
   loggedUser: "",
+  family: null,
   expiryDate: null,
   token: null
 };
@@ -18,22 +19,13 @@ const reducer = (state = initialState, action) => {
         ...state,
         error: action.error
       };
-    case LOGIN:
+    case LOGIN_AND_FETCH_FAMILY:
       return {
         ...state,
-        loggedUser: action.user
+        loggedUser: action.payload.user,
+        family: action.payload.family
       };
-    case FETCH_FAMILY_MEMBERS:
-      return {
-        ...state,
-        loggedUser: {
-          ...state.loggedUser,
-          family: {
-            ...state.loggedUser.family,
-            ...action.family.getUserById.family
-          }
-        }
-      };
+
     case AUTH_SET_TOKEN:
       return {
         ...state,
@@ -45,7 +37,13 @@ const reducer = (state = initialState, action) => {
         ...state,
         token: null,
         expiryDate: null,
-        loggedUser: null
+        loggedUser: null,
+        family: null
+      };
+    case JOIN_TO_FAMILY:
+      return {
+        ...state,
+        family: action.family
       };
     default:
       return state;

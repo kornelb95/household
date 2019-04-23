@@ -14,6 +14,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import Header from "../components/Header";
+import { joinToFamily } from "../store/actions/user";
 
 class HomeScreen extends Component {
   state = {
@@ -25,6 +26,8 @@ class HomeScreen extends Component {
 
   _hideDialog = () => this.setState({ visible: false });
   render() {
+    const user = this.props.loggedUser;
+    const family = this.props.family;
     return (
       <ScrollView>
         {this.props.isLoading ? (
@@ -37,7 +40,12 @@ class HomeScreen extends Component {
             <View style={styles.userDataArea}>
               <View style={{ flex: 1, paddingTop: 20 }}>
                 <Text style={styles.userName}>
-                  {this.props.loggedUser.name}
+                  {user.name}
+                  {family &&
+                  family.creator &&
+                  family.creator._id === user.userId
+                    ? " - Założyciel"
+                    : null}
                 </Text>
                 <Text
                   style={[
@@ -45,8 +53,7 @@ class HomeScreen extends Component {
                     { fontSize: 20, alignItems: "flex-start" }
                   ]}
                 >
-                  {this.props.loggedUser.family &&
-                    this.props.loggedUser.family.name}
+                  Grupa: {family ? family.name : "Brak"}
                 </Text>
               </View>
               <TouchableRipple
@@ -72,23 +79,53 @@ class HomeScreen extends Component {
                       Dołącz do grupy i zacznij zabawę
                     </Dialog.Title>
                     <Divider />
-                    <Dialog.Content>
-                      <Paragraph style={{ color: "#000" }}>
-                        Aby dołączyć do grupy, wpisz numer PIN od założyciela.
-                      </Paragraph>
-                      <TextInput
-                        label="kod PIN grupy"
-                        value={this.state.pin}
-                        onChangeText={pin => this.setState({ pin })}
-                        style={{ marginVertical: 20 }}
-                      />
-                      <Button
-                        mode="contained"
-                        onPress={() => console.log("dass")}
-                      >
-                        Zatwierdź
-                      </Button>
-                    </Dialog.Content>
+                    {family === null ? (
+                      <Dialog.Content>
+                        <Paragraph style={{ color: "#000" }}>
+                          Aby dołączyć do grupy, wpisz numer PIN od założyciela.
+                        </Paragraph>
+                        <TextInput
+                          label="kod PIN grupy"
+                          value={this.state.pin}
+                          onChangeText={pin => this.setState({ pin })}
+                          style={{ marginVertical: 20 }}
+                        />
+                        <Button
+                          mode="contained"
+                          onPress={() =>
+                            this.props.onJoinToFamily(
+                              user.userId,
+                              this.state.pin
+                            )
+                          }
+                        >
+                          Zatwierdź
+                        </Button>
+                      </Dialog.Content>
+                    ) : (
+                      <Dialog.Content>
+                        <Paragraph style={{ color: "#000" }}>
+                          {family &&
+                          family.creator &&
+                          family.creator._id === user.userId
+                            ? "Udostępnij kod PIN użytkownikowi, aby dołączył."
+                            : "Jesteś już członkiem grupy."}
+                        </Paragraph>
+                        {family &&
+                        family.creator &&
+                        family.creator._id === user.userId ? (
+                          <Text
+                            style={{
+                              textAlign: "center",
+                              fontSize: 20,
+                              color: "#D916AB"
+                            }}
+                          >
+                            {family.pin}
+                          </Text>
+                        ) : null}
+                      </Dialog.Content>
+                    )}
                     <Dialog.Actions>
                       <Button onPress={this._hideDialog}>Zamknij</Button>
                     </Dialog.Actions>
@@ -147,10 +184,8 @@ const styles = StyleSheet.create({
   },
   connectedIcon: {
     width: "20%",
-    // lineHeight: 120,
     borderLeftColor: "white",
     borderLeftWidth: 4
-    // textAlign: "center"
   },
   statsContainer: {
     minHeight: 200,
@@ -169,13 +204,18 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = state => {
   return {
-    loggedUser: state.auth.loggedUser,
+    loggedUser: state.user.loggedUser,
+    family: state.user.family,
     isLoading: state.ui.isLoading
   };
 };
 
-const mapDispatchToProps = dispatch => {};
+const mapDispatchToProps = dispatch => {
+  return {
+    onJoinToFamily: (userID, pin) => dispatch(joinToFamily(userID, pin))
+  };
+};
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )(withTheme(HomeScreen));

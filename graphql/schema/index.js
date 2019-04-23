@@ -34,6 +34,7 @@ type AuthData {
   userId: ID!
   token: String!
   tokenExpiration: Int!
+  family: Family
 }
 
 input CreateUserInput {
@@ -61,6 +62,7 @@ type RootMutation {
   joinToFamily(userID: String!, pin: String!): Family!
   createTask(taskInput: CreateTaskInput): Task!
   bookTask(taskID: String!, executorID: String!): Task!
+  deleteTask(taskID: String!): Boolean
 }
 
 schema {

@@ -9,7 +9,7 @@ import {
 import { Button } from "react-native-paper";
 import DefaultTextInput from "../components/DefaultTextInput";
 import { connect } from "react-redux";
-import { login } from "../store/actions/auth";
+import { login } from "../store/actions/user";
 import validator from "../helpers/validator";
 class LoginScreen extends Component {
   static navigationOptions = {
@@ -57,9 +57,9 @@ class LoginScreen extends Component {
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <View style={styles.container}>
           <View style={styles.inputContainer}>
-            {this.props.auth.error !== "" ? (
+            {this.props.user.error !== "" ? (
               <View style={{ alignItems: "center" }}>
-                <Text style={styles.errorText}>{this.props.auth.error}</Text>
+                <Text style={styles.errorText}>{this.props.user.error}</Text>
               </View>
             ) : null}
             <DefaultTextInput
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = state => {
   return {
-    auth: state.auth,
+    user: state.user,
     isLoading: state.ui.isLoading
   };
 };

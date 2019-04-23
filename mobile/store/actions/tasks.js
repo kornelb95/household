@@ -1,6 +1,6 @@
 import NavigationService from "../../navigation/NavigationService";
 import { uiStartLoading, uiStopLoading } from "./ui";
-import { FETCH_ALL_FAMILY_TASKS } from "./actionTypes";
+import { FETCH_ALL_FAMILY_TASKS, DELETE_TASK } from "./actionTypes";
 const uri = "http://192.168.1.12:8000/graphql";
 export const addNewTask = taskData => {
   return dispatch => {
@@ -135,6 +135,40 @@ export const bookTask = (taskID, executorID) => {
         }
       })
       .then(familyID => dispatch(fetchAllFamilyTasks(familyID)))
+      .catch(err => {
+        console.log(err);
+      });
+  };
+};
+
+export const deleteTask = taskID => {
+  return dispatch => {
+    const requestBody = {
+      query: `
+        mutation DeleteTask($taskID: String!) {
+          deleteTask(taskID: $taskID) 
+        }
+      `,
+      variables: {
+        taskID
+      }
+    };
+    fetch(uri, {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(parsedRes => {
+        if (parsedRes.data.deleteTask) {
+          dispatch({
+            type: DELETE_TASK,
+            taskID
+          });
+        }
+      })
       .catch(err => {
         console.log(err);
       });

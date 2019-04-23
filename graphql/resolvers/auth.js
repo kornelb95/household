@@ -69,15 +69,19 @@ module.exports = {
       {
         userId: user.id,
         email: user.email,
-        name: user.name,
-        family: family !== null ? transformFamily(family) : null
+        name: user.name
       },
       require("../../config/keys").secret,
       {
         expiresIn: "1h"
       }
     );
-    return { userId: user.id, token, tokenExpiration: 1 };
+    return {
+      userId: user.id,
+      token,
+      tokenExpiration: 1,
+      family: family !== null ? transformFamily(family) : null
+    };
   },
   user: async ({ email }, req) => {
     try {

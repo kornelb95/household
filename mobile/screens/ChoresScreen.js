@@ -8,15 +8,20 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import moment from "moment";
+import { Notifications } from "expo";
 import { connect } from "react-redux";
 import { List, TouchableRipple } from "react-native-paper";
-import { fetchAllFamilyTasks, bookTask } from "../store/actions/tasks";
+import {
+  fetchAllFamilyTasks,
+  bookTask,
+  deleteTask
+} from "../store/actions/tasks";
 import Header from "../components/Header";
 class ChoresScreen extends Component {
   state = {};
   componentDidMount() {
-    if (this.props.loggedUser.family !== null) {
-      this.props.onFetchAllFamilyTasks(this.props.loggedUser.family._id);
+    if (this.props.family !== null) {
+      this.props.onFetchAllFamilyTasks(this.props.family._id);
     }
   }
 
@@ -33,7 +38,7 @@ class ChoresScreen extends Component {
           <Header />
           <View style={styles.choresArea}>
             <Text style={styles.addTaskText}>Dodaj zadanie</Text>
-            {this.props.loggedUser.family === null ? (
+            {this.props.family === null ? (
               <View
                 style={[
                   styles.addTaskIconWrapper,
@@ -69,54 +74,117 @@ class ChoresScreen extends Component {
               title={`Zadania wolne (${freeTasks.length})`}
               left={props => <List.Icon {...props} icon="bookmark" />}
             >
-              {freeTasks.map(task => (
-                <List.Item
-                  description={moment(task.deadline).format("YYYY-MM-DD HH:mm")}
-                  right={props => (
-                    <View style={{ flexDirection: "row" }}>
-                      <TouchableRipple
-                        onPress={() =>
-                          this.props.onBookTask(
-                            task._id,
-                            this.props.loggedUser.userId
-                          )
-                        }
-                        rippleColor="rgba(0, 0, 0, .32)"
-                      >
-                        <List.Icon {...props} icon="launch" color="#D916AB" />
-                      </TouchableRipple>
-                      <TouchableRipple rippleColor="rgba(0, 0, 0, .32)">
-                        <List.Icon {...props} icon="delete" color="#D916AB" />
-                      </TouchableRipple>
-                    </View>
-                  )}
-                  key={task._id}
-                  title={`${task.title}: ${task.points} pkt`}
-                />
-              ))}
+              {freeTasks.map(task => {
+                return (
+                  <List.Item
+                    description={
+                      Date.now() - new Date(task.deadline).getTime() > 0
+                        ? `${moment(task.deadline).format(
+                            "YYYY-MM-DD HH:mm"
+                          )} - minął termin`
+                        : moment(task.deadline).format("YYYY-MM-DD HH:mm")
+                    }
+                    descriptionStyle={
+                      Date.now() - new Date(task.deadline).getTime() > 0
+                        ? { color: "red" }
+                        : {}
+                    }
+                    right={props => (
+                      <View style={{ flexDirection: "row" }}>
+                        <TouchableRipple
+                          onPress={() => {
+                            this.props.onBookTask(
+                              task._id,
+                              this.props.loggedUser.userId
+                            );
+                            Notifications.scheduleLocalNotificationAsync(
+                              {
+                                title: "Mija termin twojego zadania",
+                                body: `${task.title} - ${moment(
+                                  task.deadline
+                                ).format("YYYY-MM-DD HH:mm")}`
+                              },
+                              {
+                                time:
+                                  new Date(task.deadline).getTime() - 3600000
+                              }
+                            );
+                          }}
+                          disabled={
+                            Date.now() - new Date(task.deadline).getTime() > 0
+                          }
+                          rippleColor="rgba(0, 0, 0, .32)"
+                        >
+                          <List.Icon
+                            {...props}
+                            icon="launch"
+                            color={
+                              Date.now() - new Date(task.deadline).getTime() > 0
+                                ? "#aaa"
+                                : "#D916AB"
+                            }
+                          />
+                        </TouchableRipple>
+                        <TouchableRipple
+                          rippleColor="rgba(0, 0, 0, .32)"
+                          onPress={() => this.props.onDeleteTask(task._id)}
+                        >
+                          <List.Icon {...props} icon="delete" color="#D916AB" />
+                        </TouchableRipple>
+                      </View>
+                    )}
+                    key={task._id}
+                    title={`${task.title}: ${task.points} pkt`}
+                  />
+                );
+              })}
             </List.Accordion>
 
             <List.Accordion
               title={`Moje zadania (${myTasks.length})`}
               left={props => <List.Icon {...props} icon="assignment" />}
             >
-              {myTasks.map(task => (
-                <List.Item
-                  description={moment(task.deadline).format("YYYY-MM-DD HH:mm")}
-                  right={props => (
-                    <View style={{ flexDirection: "row" }}>
-                      <TouchableRipple rippleColor="rgba(0, 0, 0, .32)">
-                        <List.Icon {...props} icon="launch" color="#D916AB" />
-                      </TouchableRipple>
-                      <TouchableRipple rippleColor="rgba(0, 0, 0, .32)">
-                        <List.Icon {...props} icon="delete" color="#D916AB" />
-                      </TouchableRipple>
-                    </View>
-                  )}
-                  key={task._id}
-                  title={`${task.title}: ${task.points} pkt`}
-                />
-              ))}
+              {myTasks.map(task => {
+                return (
+                  <List.Item
+                    description={
+                      Date.now() - new Date(task.deadline).getTime() > 0
+                        ? `${moment(task.deadline).format(
+                            "YYYY-MM-DD HH:mm"
+                          )} - minął termin`
+                        : moment(task.deadline).format("YYYY-MM-DD HH:mm")
+                    }
+                    descriptionStyle={
+                      Date.now() - new Date(task.deadline).getTime() > 0
+                        ? { color: "red" }
+                        : {}
+                    }
+                    right={props => (
+                      <View style={{ flexDirection: "row" }}>
+                        <TouchableRipple rippleColor="rgba(0, 0, 0, .32)">
+                          <List.Icon
+                            {...props}
+                            icon="launch"
+                            color={
+                              Date.now() - new Date(task.deadline).getTime() > 0
+                                ? "#aaa"
+                                : "#D916AB"
+                            }
+                          />
+                        </TouchableRipple>
+                        <TouchableRipple
+                          rippleColor="rgba(0, 0, 0, .32)"
+                          onPress={() => this.props.onDeleteTask(task._id)}
+                        >
+                          <List.Icon {...props} icon="delete" color="#D916AB" />
+                        </TouchableRipple>
+                      </View>
+                    )}
+                    key={task._id}
+                    title={`${task.title}: ${task.points} pkt`}
+                  />
+                );
+              })}
             </List.Accordion>
           </View>
         </View>
@@ -163,16 +231,18 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = state => {
   return {
-    loggedUser: state.auth.loggedUser,
+    loggedUser: state.user.loggedUser,
     isLoading: state.ui.isLoading,
-    tasks: state.task.tasks
+    tasks: state.task.tasks,
+    family: state.user.family
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     onFetchAllFamilyTasks: familyId => dispatch(fetchAllFamilyTasks(familyId)),
-    onBookTask: (taskId, executorId) => dispatch(bookTask(taskId, executorId))
+    onBookTask: (taskId, executorId) => dispatch(bookTask(taskId, executorId)),
+    onDeleteTask: taskID => dispatch(deleteTask(taskID))
   };
 };
 export default connect(

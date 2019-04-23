@@ -67,7 +67,7 @@ class addTaskModal extends React.Component {
     }
   };
   render() {
-    const { family } = this.props.loggedUser;
+    const family = this.props.family;
     return (
       <View style={{ flex: 1, backgroundColor: "#000" }}>
         <View
@@ -141,8 +141,9 @@ class addTaskModal extends React.Component {
             date={this.state.inputs.deadline.value}
             mode="datetime"
             placeholder="Wybierz datę zakończenia zadania"
-            format="YYYY-MM-DD, h:mm:ss"
+            format="YYYY-MM-DD, H:mm:ss"
             minDate={new Date()}
+            is24Hour
             confirmBtnText="Zatwierdź"
             cancelBtnText="Zamknij"
             customStyles={{
@@ -194,14 +195,14 @@ class addTaskModal extends React.Component {
             <Button
               mode="contained"
               color="#D916AB"
-              onPress={() =>
+              onPress={() => {
                 this.props.onAddNewTask({
                   points: this.state.points,
                   title: this.state.inputs.title.value,
                   deadline: this.state.inputs.deadline.value,
-                  familyID: family
-                })
-              }
+                  familyID: family._id
+                });
+              }}
               style={{ marginBottom: "10%" }}
               disabled={
                 !this.state.inputs.title.valid ||
@@ -219,7 +220,8 @@ class addTaskModal extends React.Component {
 const mapStateToProps = state => {
   return {
     isLoading: state.ui.isLoading,
-    loggedUser: state.auth.loggedUser
+    loggedUser: state.user.loggedUser,
+    family: state.user.family
   };
 };
 const mapDispatchToProps = dispatch => {

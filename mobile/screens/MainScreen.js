@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View, Text, StyleSheet, ImageBackground } from "react-native";
 import { Button } from "react-native-paper";
 import { connect } from "react-redux";
-import { authAutoSignIn } from "../store/actions/auth";
+import { authAutoSignIn } from "../store/actions/user";
 class MainScreen extends Component {
   static navigationOptions = {
     header: null

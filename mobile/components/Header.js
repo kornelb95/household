@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Menu, Divider, TouchableRipple } from "react-native-paper";
-import { authLogout } from "../store/actions/auth";
+import { authLogout } from "../store/actions/user";
 import { connect } from "react-redux";
 class Header extends Component {
   state = {

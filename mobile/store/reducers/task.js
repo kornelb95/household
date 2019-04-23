@@ -1,4 +1,4 @@
-import { FETCH_ALL_FAMILY_TASKS } from "../actions/actionTypes";
+import { FETCH_ALL_FAMILY_TASKS, DELETE_TASK } from "../actions/actionTypes";
 const initialState = {
   tasks: []
 };
@@ -8,6 +8,11 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         tasks: [...action.tasks]
+      };
+    case DELETE_TASK:
+      return {
+        ...state,
+        tasks: state.tasks.filter(task => task._id !== action.taskID)
       };
     default:
       return state;

@@ -41,5 +41,13 @@ module.exports = {
     } catch (err) {
       throw err;
     }
+  },
+  deleteTask: async ({ taskID }) => {
+    try {
+      const task = await Task.findByIdAndDelete(taskID);
+      return true;
+    } catch (err) {
+      throw err;
+    }
   }
 };

@@ -2,12 +2,12 @@ import { AsyncStorage } from "react-native";
 import NavigationService from "../../navigation/NavigationService";
 import jwtDecode from "jwt-decode";
 import { uiStartLoading, uiStopLoading } from "./ui";
-import { fetchUsersFamilyMembers } from "./family";
 import {
   AUTH_ERROR,
-  LOGIN,
+  LOGIN_AND_FETCH_FAMILY,
   AUTH_REMOVE_TOKEN,
-  AUTH_SET_TOKEN
+  AUTH_SET_TOKEN,
+  JOIN_TO_FAMILY
 } from "./actionTypes";
 const uri = "http://192.168.1.12:8000/graphql";
 export const signup = userData => {
@@ -66,6 +66,19 @@ export const login = userData => {
             userId
             token
             tokenExpiration
+            family {
+              _id
+              name
+              pin
+              creator {
+                _id
+                name
+              }
+              members {
+                _id
+                name
+              }
+            }
           }
         }
       `,
@@ -88,7 +101,6 @@ export const login = userData => {
           dispatch(uiStopLoading());
         } else {
           dispatch(uiStopLoading());
-          NavigationService.navigate("Home");
           dispatch(userLogin(parsedRes.data.login));
         }
       })
@@ -111,10 +123,10 @@ userLogin = authData => {
   return dispatch => {
     dispatch(authStoreToken(authData.token, authData.tokenExpiration));
     dispatch({
-      type: LOGIN,
-      user: jwtDecode(authData.token)
+      type: LOGIN_AND_FETCH_FAMILY,
+      payload: { user: jwtDecode(authData.token), family: authData.family }
     });
-    dispatch(fetchUsersFamilyMembers(authData.userId));
+    NavigationService.navigate("Home");
   };
 };
 export const authStoreToken = (token, expiresIn) => {
@@ -208,5 +220,54 @@ export const authLogout = () => {
 export const authRemoveToken = () => {
   return {
     type: AUTH_REMOVE_TOKEN
+  };
+};
+
+export const joinToFamily = (userID, pin) => {
+  return dispatch => {
+    const requestBody = {
+      query: `
+        mutation JoinToFamily($userID: String!, $pin: String!) {
+          joinToFamily(userID: $userID, pin: $pin) {
+            _id
+            name
+            creator {
+              _id 
+              name
+            }
+            members {
+              _id
+              name
+            }
+          }
+        }
+      `,
+      variables: {
+        userID,
+        pin
+      }
+    };
+    fetch(uri, {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(parsedRes => {
+        if (parsedRes.errors) {
+          console.log(parsedRes.errors);
+        } else {
+          console.log(parsedRes.data);
+          dispatch({
+            type: JOIN_TO_FAMILY,
+            family: parsedRes.data.joinToFamily
+          });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 };
