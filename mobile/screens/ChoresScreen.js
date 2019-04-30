@@ -48,6 +48,15 @@ class ChoresScreen extends Component {
         );
       }
     });
+    const myTasksForAccept = this.props.tasks.filter(task => {
+      if (task.executor !== null) {
+        return (
+          task.executor._id === this.props.loggedUser.userId &&
+          task.toAccept &&
+          !task.finished
+        );
+      }
+    });
     const finishedTasks = this.props.tasks.filter(task => {
       if (task.executor !== null) {
         return (
@@ -254,7 +263,21 @@ class ChoresScreen extends Component {
               })}
             </List.Accordion>
             <List.Accordion
-              title={`Twoje ukończone zadania (${finishedTasks.length})`}
+              title={`Czekające na zaakceptowanie (${myTasksForAccept.length})`}
+              left={props => <List.Icon {...props} icon="assignment" />}
+            >
+              {myTasksForAccept.map(task => {
+                return (
+                  <List.Item
+                    description={task.executor.name}
+                    key={task._id}
+                    title={`${task.title}: ${task.points} pkt`}
+                  />
+                );
+              })}
+            </List.Accordion>
+            <List.Accordion
+              title={`Moje ukończone zadania (${finishedTasks.length})`}
               left={props => <List.Icon {...props} icon="assignment" />}
             >
               {finishedTasks.map(task => {
