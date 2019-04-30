@@ -12,6 +12,8 @@ type Task {
   finished: Boolean!
   createdAt: String
   updatedAt: String
+  toAccept: Boolean!
+  accepted: [User]
 }
 
 type Family {
@@ -64,6 +66,7 @@ type RootMutation {
   bookTask(taskID: String!, executorID: String!): Task!
   deleteTask(taskID: String!): Boolean
   finishedTask(taskID: String!): Task
+  acceptTask(taskID: String!, familyID: String!, userID: String!): Task
 }
 
 schema {

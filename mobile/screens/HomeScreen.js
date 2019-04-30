@@ -9,23 +9,30 @@ import {
   Portal,
   withTheme,
   Divider,
-  TextInput
+  TextInput,
+  DataTable
 } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import Header from "../components/Header";
 import { joinToFamily } from "../store/actions/user";
+import { fetchAllFamilyTasks } from "../store/actions/tasks";
 
 class HomeScreen extends Component {
   state = {
     visible: false,
     pin: ""
   };
-
+  componentDidMount() {
+    if (this.props.family !== null) {
+      this.props.onFetchAllFamilyTasks(this.props.family._id);
+    }
+  }
   _showDialog = () => this.setState({ visible: true });
 
   _hideDialog = () => this.setState({ visible: false });
   render() {
+    console.log(this.props.tasks);
     const user = this.props.loggedUser;
     const family = this.props.family;
     return (
@@ -145,10 +152,50 @@ class HomeScreen extends Component {
               Statystyki
             </Text>
             <View style={styles.statsContainer}>
-              <View style={styles.memberStats} />
-              <View style={styles.memberStats} />
-              <View style={styles.memberStats} />
-              <View style={styles.memberStats} />
+              {this.props.family.members.map(member => {
+                return (
+                  <DataTable key={member._id} style={styles.memberStats}>
+                    <DataTable.Header style={{ color: "#000" }}>
+                      <DataTable.Title style={{ color: "#000" }}>
+                        {member.name}
+                      </DataTable.Title>
+                    </DataTable.Header>
+
+                    <DataTable.Row style={{ color: "#000" }}>
+                      <DataTable.Cell style={{ color: "#000" }}>
+                        Ukończone zadania
+                      </DataTable.Cell>
+                      <DataTable.Cell numeric>
+                        {
+                          this.props.tasks.filter(task => {
+                            if (task.executor !== null) {
+                              if (member._id === task.executor._id) {
+                                return task.finished;
+                              }
+                            }
+                          }).length
+                        }
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                    <DataTable.Row style={{ color: "#000" }}>
+                      <DataTable.Cell style={{ color: "#000" }}>
+                        Zadania do zrobienia
+                      </DataTable.Cell>
+                      <DataTable.Cell numeric>
+                        {
+                          this.props.tasks.filter(task => {
+                            if (task.executor !== null) {
+                              if (member._id === task.executor._id) {
+                                return !task.finished;
+                              }
+                            }
+                          }).length
+                        }
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                  </DataTable>
+                );
+              })}
             </View>
           </View>
         )}
@@ -192,27 +239,31 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#fff",
     flexDirection: "row",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
+    justifyContent: "center"
   },
   memberStats: {
-    width: "50%",
-    height: 100,
+    width: "100%",
     backgroundColor: "#D916AB",
     borderColor: "white",
-    borderWidth: 4
+    borderWidth: 4,
+    paddingHorizontal: 5,
+    paddingVertical: 5
   }
 });
 const mapStateToProps = state => {
   return {
     loggedUser: state.user.loggedUser,
     family: state.user.family,
-    isLoading: state.ui.isLoading
+    isLoading: state.ui.isLoading,
+    tasks: state.task.tasks
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onJoinToFamily: (userID, pin) => dispatch(joinToFamily(userID, pin))
+    onJoinToFamily: (userID, pin) => dispatch(joinToFamily(userID, pin)),
+    onFetchAllFamilyTasks: familyID => dispatch(fetchAllFamilyTasks(familyID))
   };
 };
 export default connect(

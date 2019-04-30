@@ -37,7 +37,8 @@ module.exports = {
         }
         const family = new Family({
           name: familyName,
-          creator: createdUser.id
+          creator: createdUser.id,
+          members: [createdUser.id]
         });
         const createdFamily = await family.save();
         const updatedUser = await User.findByIdAndUpdate(
@@ -61,11 +62,11 @@ module.exports = {
     if (!isMatch) {
       throw new Error("Nieprawidłowe dane logowania");
     }
-    let family = null;
+    let userFamily = null;
     if (user.family !== null) {
-      family = await Family.findById(user.family);
+      userFamily = await Family.findById(user.family);
     }
-    const token = jwt.sign(
+    const token = await jwt.sign(
       {
         userId: user.id,
         email: user.email,
@@ -80,7 +81,7 @@ module.exports = {
       userId: user.id,
       token,
       tokenExpiration: 1,
-      family: family !== null ? transformFamily(family) : null
+      family: userFamily ? transformFamily(userFamily) : null
     };
   },
   user: async ({ email }, req) => {

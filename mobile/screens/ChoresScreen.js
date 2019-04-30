@@ -15,7 +15,8 @@ import {
   fetchAllFamilyTasks,
   bookTask,
   deleteTask,
-  finishedTask
+  finishedTask,
+  acceptTask
 } from "../store/actions/tasks";
 import Header from "../components/Header";
 class ChoresScreen extends Component {
@@ -27,18 +28,32 @@ class ChoresScreen extends Component {
   }
 
   render() {
+    const freeTasks = this.props.tasks.filter(task => task.executor === null);
     const myTasks = this.props.tasks.filter(task => {
       if (task.executor !== null) {
         return (
-          task.executor._id === this.props.loggedUser.userId && !task.finished
+          task.executor._id === this.props.loggedUser.userId &&
+          !task.finished &&
+          !task.toAccept
         );
       }
     });
-    const freeTasks = this.props.tasks.filter(task => task.executor === null);
+
+    const tasksToAccept = this.props.tasks.filter(task => {
+      if (task.executor !== null) {
+        return (
+          task.executor._id !== this.props.loggedUser.userId &&
+          task.toAccept &&
+          !task.finished
+        );
+      }
+    });
     const finishedTasks = this.props.tasks.filter(task => {
       if (task.executor !== null) {
         return (
-          task.executor._id === this.props.loggedUser.userId && task.finished
+          task.executor._id === this.props.loggedUser.userId &&
+          task.toAccept &&
+          task.finished
         );
       }
     });
@@ -201,12 +216,51 @@ class ChoresScreen extends Component {
             </List.Accordion>
 
             <List.Accordion
-              title={`Ukończone zadania (${finishedTasks.length})`}
+              title={`Zadania do zaakceptowania (${tasksToAccept.length})`}
+              left={props => <List.Icon {...props} icon="assignment" />}
+            >
+              {tasksToAccept.map(task => {
+                return (
+                  <List.Item
+                    description={task.executor.name}
+                    right={props => (
+                      <View style={{ flexDirection: "row" }}>
+                        <TouchableRipple
+                          rippleColor="rgba(0, 0, 0, .32)"
+                          onPress={() =>
+                            this.props.onAcceptTask(
+                              task._id,
+                              this.props.family._id,
+                              this.props.loggedUser.userId
+                            )
+                          }
+                        >
+                          <List.Icon
+                            {...props}
+                            icon="check"
+                            color={
+                              Date.now() - new Date(task.deadline).getTime() > 0
+                                ? "#aaa"
+                                : "#D916AB"
+                            }
+                          />
+                        </TouchableRipple>
+                      </View>
+                    )}
+                    key={task._id}
+                    title={`${task.title}: ${task.points} pkt`}
+                  />
+                );
+              })}
+            </List.Accordion>
+            <List.Accordion
+              title={`Twoje ukończone zadania (${finishedTasks.length})`}
               left={props => <List.Icon {...props} icon="assignment" />}
             >
               {finishedTasks.map(task => {
                 return (
                   <List.Item
+                    description={task.executor.name}
                     key={task._id}
                     title={`${task.title}: ${task.points} pkt`}
                   />
@@ -270,7 +324,9 @@ const mapDispatchToProps = dispatch => {
     onFetchAllFamilyTasks: familyId => dispatch(fetchAllFamilyTasks(familyId)),
     onBookTask: (taskId, executorId) => dispatch(bookTask(taskId, executorId)),
     onDeleteTask: taskID => dispatch(deleteTask(taskID)),
-    onFinishedTask: taskID => dispatch(finishedTask(taskID))
+    onFinishedTask: taskID => dispatch(finishedTask(taskID)),
+    onAcceptTask: (taskID, familyID, userID) =>
+      dispatch(acceptTask(taskID, familyID, userID))
   };
 };
 export default connect(

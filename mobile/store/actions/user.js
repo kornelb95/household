@@ -259,7 +259,6 @@ export const joinToFamily = (userID, pin) => {
         if (parsedRes.errors) {
           console.log(parsedRes.errors);
         } else {
-          console.log(parsedRes.data);
           dispatch({
             type: JOIN_TO_FAMILY,
             family: parsedRes.data.joinToFamily

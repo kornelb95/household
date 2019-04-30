@@ -1,4 +1,5 @@
 const Task = require("../../models/Task");
+const Family = require("../../models/Family");
 const { transformTask } = require("./loaders");
 module.exports = {
   createTask: async args => {
@@ -54,11 +55,26 @@ module.exports = {
     try {
       const updatedTask = await Task.findByIdAndUpdate(
         taskID,
-        { finished: true },
+        { toAccept: true },
         { new: true }
       );
 
       return transformTask(updatedTask);
+    } catch (err) {
+      throw err;
+    }
+  },
+  acceptTask: async ({ taskID, familyID, userID }) => {
+    try {
+      const family = await Family.findById(familyID);
+      const toFinished = family.members.length - 1;
+      const task = await Task.findById(taskID);
+      task.accepted.push(userID);
+      if (task.accepted.length >= toFinished) {
+        task.finished = true;
+      }
+      task.save();
+      return transformTask(task);
     } catch (err) {
       throw err;
     }

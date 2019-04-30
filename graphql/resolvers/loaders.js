@@ -54,7 +54,8 @@ const transformFamily = family => {
     ...family._doc,
     _id: family.id,
     creator: () => userLoader.load(family._doc.creator.toString()),
-    members: () => userLoader.loadMany(family._doc.members)
+    members: () =>
+      userLoader.loadMany(family._doc.members.map(member => member.toString()))
   };
 };
 const transformTask = task => {
@@ -68,7 +69,9 @@ const transformTask = task => {
         : userLoader.load(task._doc.executor.toString()),
     family: family.bind(this, task.family),
     createdAt: new Date(task.createdAt).toISOString(),
-    updatedAt: new Date(task.updatedAt).toISOString()
+    updatedAt: new Date(task.updatedAt).toISOString(),
+    accepted: () =>
+      userLoader.loadMany(task._doc.accepted.map(accept => accept.toString()))
   };
 };
 exports.transformUser = transformUser;

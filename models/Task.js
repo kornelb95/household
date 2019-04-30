@@ -27,6 +27,14 @@ const taskSchema = new Schema(
     finished: {
       type: Boolean,
       default: false
+    },
+    accepted: {
+      type: [Schema.Types.ObjectId],
+      ref: "User"
+    },
+    toAccept: {
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }

@@ -7,4 +7,5 @@ export const AUTH_SET_TOKEN = "AUTH_SET_TOKEN";
 export const AUTH_REMOVE_TOKEN = "AUTH_REMOVE_TOKEN";
 export const JOIN_TO_FAMILY = "JOIN_TO_FAMILY";
 export const DELETE_TASK = "DELETE_TASK";
-export const FINISHED_TASK = "FINISHED_TASK";
+export const TO_ACCEPT_TASK = "TO_ACCEPT_TASK";
+export const ACCEPT_TASK = "ACCEPT_TASK";
