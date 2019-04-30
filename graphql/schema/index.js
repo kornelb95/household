@@ -63,6 +63,7 @@ type RootMutation {
   createTask(taskInput: CreateTaskInput): Task!
   bookTask(taskID: String!, executorID: String!): Task!
   deleteTask(taskID: String!): Boolean
+  finishedTask(taskID: String!): Task
 }
 
 schema {

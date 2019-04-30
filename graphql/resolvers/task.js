@@ -49,5 +49,18 @@ module.exports = {
     } catch (err) {
       throw err;
     }
+  },
+  finishedTask: async ({ taskID }) => {
+    try {
+      const updatedTask = await Task.findByIdAndUpdate(
+        taskID,
+        { finished: true },
+        { new: true }
+      );
+
+      return transformTask(updatedTask);
+    } catch (err) {
+      throw err;
+    }
   }
 };

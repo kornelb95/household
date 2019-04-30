@@ -14,7 +14,8 @@ import { List, TouchableRipple } from "react-native-paper";
 import {
   fetchAllFamilyTasks,
   bookTask,
-  deleteTask
+  deleteTask,
+  finishedTask
 } from "../store/actions/tasks";
 import Header from "../components/Header";
 class ChoresScreen extends Component {
@@ -28,10 +29,19 @@ class ChoresScreen extends Component {
   render() {
     const myTasks = this.props.tasks.filter(task => {
       if (task.executor !== null) {
-        return task.executor._id === this.props.loggedUser.userId;
+        return (
+          task.executor._id === this.props.loggedUser.userId && !task.finished
+        );
       }
     });
     const freeTasks = this.props.tasks.filter(task => task.executor === null);
+    const finishedTasks = this.props.tasks.filter(task => {
+      if (task.executor !== null) {
+        return (
+          task.executor._id === this.props.loggedUser.userId && task.finished
+        );
+      }
+    });
     return (
       <ScrollView>
         <View style={styles.container}>
@@ -161,10 +171,13 @@ class ChoresScreen extends Component {
                     }
                     right={props => (
                       <View style={{ flexDirection: "row" }}>
-                        <TouchableRipple rippleColor="rgba(0, 0, 0, .32)">
+                        <TouchableRipple
+                          rippleColor="rgba(0, 0, 0, .32)"
+                          onPress={() => this.props.onFinishedTask(task._id)}
+                        >
                           <List.Icon
                             {...props}
-                            icon="launch"
+                            icon="check"
                             color={
                               Date.now() - new Date(task.deadline).getTime() > 0
                                 ? "#aaa"
@@ -180,6 +193,20 @@ class ChoresScreen extends Component {
                         </TouchableRipple>
                       </View>
                     )}
+                    key={task._id}
+                    title={`${task.title}: ${task.points} pkt`}
+                  />
+                );
+              })}
+            </List.Accordion>
+
+            <List.Accordion
+              title={`Ukończone zadania (${finishedTasks.length})`}
+              left={props => <List.Icon {...props} icon="assignment" />}
+            >
+              {finishedTasks.map(task => {
+                return (
+                  <List.Item
                     key={task._id}
                     title={`${task.title}: ${task.points} pkt`}
                   />
@@ -242,7 +269,8 @@ const mapDispatchToProps = dispatch => {
   return {
     onFetchAllFamilyTasks: familyId => dispatch(fetchAllFamilyTasks(familyId)),
     onBookTask: (taskId, executorId) => dispatch(bookTask(taskId, executorId)),
-    onDeleteTask: taskID => dispatch(deleteTask(taskID))
+    onDeleteTask: taskID => dispatch(deleteTask(taskID)),
+    onFinishedTask: taskID => dispatch(finishedTask(taskID))
   };
 };
 export default connect(

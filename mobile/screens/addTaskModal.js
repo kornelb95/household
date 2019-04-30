@@ -141,7 +141,7 @@ class addTaskModal extends React.Component {
             date={this.state.inputs.deadline.value}
             mode="datetime"
             placeholder="Wybierz datę zakończenia zadania"
-            format="YYYY-MM-DD, H:mm:ss"
+            format="YYYY-MM-DD HH:mm:ss"
             minDate={new Date()}
             is24Hour
             confirmBtnText="Zatwierdź"
@@ -169,9 +169,7 @@ class addTaskModal extends React.Component {
                 fontSize: 20
               }
             }}
-            onDateChange={date =>
-              this.updateStateInput("deadline", new Date(date).toISOString())
-            }
+            onDateChange={date => this.updateStateInput("deadline", date)}
           />
         </View>
         {this.props.isLoading ? (
