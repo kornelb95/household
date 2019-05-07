@@ -19,6 +19,15 @@ import {
   acceptTask
 } from "../store/actions/tasks";
 import Header from "../components/Header";
+import gql from "graphql-tag";
+import { Subscription } from "react-apollo";
+const TAKS_SUBSCRIPTION = gql`
+  subscription {
+    taskAdded {
+      _id
+    }
+  }
+`;
 class ChoresScreen extends Component {
   state = {};
   componentDidMount() {
@@ -70,6 +79,18 @@ class ChoresScreen extends Component {
       <ScrollView>
         <View style={styles.container}>
           <Header />
+          <Subscription
+            subscription={TAKS_SUBSCRIPTION}
+            onSubscriptionData={() =>
+              this.props.onFetchAllFamilyTasks(this.props.family._id)
+            }
+          >
+            {data => {
+              if (data)
+                () => this.props.onFetchAllFamilyTasks(this.props.family._id);
+              return null;
+            }}
+          </Subscription>
           <View style={styles.choresArea}>
             <Text style={styles.addTaskText}>Dodaj zadanie</Text>
             {this.props.family === null ? (

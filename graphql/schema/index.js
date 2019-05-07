@@ -1,76 +1,75 @@
-const { buildSchema } = require("graphql");
+// const { buildSchema } = require("graphql");
+const { gql } = require("apollo-server-express");
+const typeDefs = gql`
+  type Task {
+    _id: ID!
+    title: String!
+    points: Int!
+    deadline: String!
+    executor: User
+    family: Family!
+    finished: Boolean!
+    createdAt: String
+    updatedAt: String
+    toAccept: Boolean!
+    accepted: [User]
+  }
 
-module.exports = buildSchema(`
+  type Family {
+    _id: ID!
+    name: String!
+    creator: User!
+    members: [User!]
+    pin: String
+  }
 
-type Task {
-  _id: ID!
-  title: String!
-  points: Int!
-  deadline: String!
-  executor: User
-  family: Family!
-  finished: Boolean!
-  createdAt: String
-  updatedAt: String
-  toAccept: Boolean!
-  accepted: [User]
-}
+  type User {
+    _id: ID!
+    email: String!
+    password: String
+    name: String!
+    family: Family
+  }
 
-type Family {
-  _id: ID!
-  name: String!
-  creator: User!
-  members: [User!]
-  pin: String
-}
+  type AuthData {
+    userId: ID!
+    token: String!
+    tokenExpiration: Int!
+    family: Family
+  }
 
-type User {
-  _id: ID!
-  email: String!
-  password: String
-  name: String!
-  family: Family
-}
+  input CreateUserInput {
+    email: String!
+    password: String!
+    name: String!
+    isFamilyCreating: Boolean!
+    familyName: String
+  }
+  input CreateTaskInput {
+    title: String!
+    points: Int!
+    deadline: String!
+    familyID: String!
+  }
+  type Query {
+    login(email: String!, password: String!): AuthData!
+    user(email: String!): User
+    getUserById(id: String!): User
+    getFamilyTasks(familyID: String!): [Task!]
+  }
 
-type AuthData {
-  userId: ID!
-  token: String!
-  tokenExpiration: Int!
-  family: Family
-}
+  type Mutation {
+    createUser(userInput: CreateUserInput): User
+    joinToFamily(userID: String!, pin: String!): Family!
+    createTask(taskInput: CreateTaskInput): Task!
+    bookTask(taskID: String!, executorID: String!): Task!
+    deleteTask(taskID: String!): Boolean
+    finishedTask(taskID: String!): Task
+    acceptTask(taskID: String!, familyID: String!, userID: String!): Task
+  }
 
-input CreateUserInput {
-  email: String!
-  password: String!
-  name: String!
-  isFamilyCreating: Boolean!
-  familyName: String
-}
-input CreateTaskInput {
-  title: String!
-  points: Int!
-  deadline: String!
-  familyID: String!
-}
-type RootQuery {
-  login(email: String!, password: String!): AuthData!
-  user(email: String!): User
-  getUserById(id: String!): User
-  getFamilyTasks(familyID: String!): [Task!]
-}
-
-type RootMutation {
-  createUser(userInput: CreateUserInput): User
-  joinToFamily(userID: String!, pin: String!): Family!
-  createTask(taskInput: CreateTaskInput): Task!
-  bookTask(taskID: String!, executorID: String!): Task!
-  deleteTask(taskID: String!): Boolean
-  finishedTask(taskID: String!): Task
-  acceptTask(taskID: String!, familyID: String!, userID: String!): Task
-}
-
-schema {
-  query: RootQuery
-  mutation: RootMutation
-}
-`);
+  type Subscription {
+    taskAdded: Task
+  }
+`;
+module.exports = typeDefs;

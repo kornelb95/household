@@ -32,7 +32,6 @@ class HomeScreen extends Component {
 
   _hideDialog = () => this.setState({ visible: false });
   render() {
-    console.log(this.props.tasks);
     const user = this.props.loggedUser;
     const family = this.props.family;
     return (

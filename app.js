@@ -1,26 +1,29 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const { execute, subscribe } = require("graphql");
 const graphqlHttp = require("express-graphql");
+const { SubscriptionServer } = require("subscriptions-transport-ws");
 const mongoose = require("mongoose");
 const app = express();
-const graphQLSchema = require("./graphql/schema");
-const graphQLResolvers = require("./graphql/resolvers");
+const typeDefs = require("./graphql/schema");
+const resolvers = require("./graphql/resolvers");
 const isAuth = require("./middlewares/isAuth");
+const { ApolloServer, makeExecutableSchema } = require("apollo-server-express");
+const http = require("http");
 mongoose.set("useFindAndModify", false);
 app.use(bodyParser.json());
 app.use(cors());
-app.use(isAuth);
-app.use(
-  "/graphql",
-  graphqlHttp({
-    schema: graphQLSchema,
-    rootValue: graphQLResolvers,
-    graphiql: true
-  })
-);
-app.get("/cos", (req, res) => res.json({ user: "tdsad" }));
 const PORT = 8000;
+app.use("*", cors({ origin: `http://localhost:${PORT}` }));
+app.use(isAuth);
+const schema = makeExecutableSchema({ typeDefs, resolvers });
+const server = new ApolloServer({
+  schema
+});
+server.applyMiddleware({ app, path: "/graphql" });
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
 mongoose
   .connect(
     `mongodb+srv://${process.env.MONGO_USER}:${
@@ -29,7 +32,14 @@ mongoose
     { useNewUrlParser: true }
   )
   .then(() => {
-    app.listen(PORT, () => console.log(`Server started on ${PORT}`));
+    httpServer.listen(PORT, () => {
+      console.log(`Server started on ${PORT}${server.graphqlPath}`);
+      console.log(
+        `Subscriptions ready at ws://localhost:${PORT}${
+          server.subscriptionsPath
+        }`
+      );
+    });
   })
   .catch(err => {
     console.log(err);

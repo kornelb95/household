@@ -14,7 +14,7 @@ class Header extends Component {
   render() {
     return (
       <View style={styles.header}>
-        <Text style={styles.headerText}>FamilyConnector</Text>
+        <Text style={styles.headerText}>TaskConnector</Text>
 
         <Menu
           visible={this.state.visible}

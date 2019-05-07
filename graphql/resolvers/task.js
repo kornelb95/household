@@ -1,6 +1,9 @@
+const { PubSub } = require("graphql-subscriptions");
 const Task = require("../../models/Task");
 const Family = require("../../models/Family");
 const { transformTask } = require("./loaders");
+const TASK_ADDED = "TASK_ADDED";
+const pubsub = new PubSub();
 module.exports = {
   createTask: async args => {
     const { title, points, deadline, familyID } = args.taskInput;
@@ -12,7 +15,9 @@ module.exports = {
     });
     try {
       const createdTask = await task.save();
-      return transformTask(createdTask);
+      const transformedTask = transformTask(createdTask);
+      pubsub.publish(TASK_ADDED, transformedTask);
+      return transformedTask;
     } catch (err) {
       throw err;
     }
@@ -78,5 +83,8 @@ module.exports = {
     } catch (err) {
       throw err;
     }
+  },
+  taskAdded: {
+    subscribe: () => pubsub.asyncIterator(TASK_ADDED)
   }
 };

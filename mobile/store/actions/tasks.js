@@ -248,7 +248,6 @@ export const acceptTask = (taskID, familyID, userID) => {
     })
       .then(res => res.json())
       .then(parsedRes => {
-        console.log(parsedRes);
         if (!parsedRes.errors) {
           dispatch({
             type: ACCEPT_TASK,
