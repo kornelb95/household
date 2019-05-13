@@ -7,9 +7,8 @@ import {
   ACCEPT_TASK
 } from "./actionTypes";
 const uri = "http://192.168.1.12:8000/graphql";
-export const addNewTask = taskData => {
+export const addNewTask = ({ points, title, deadline, familyID }) => {
   return dispatch => {
-    const { points, title, deadline, familyID } = taskData;
     const requestBody = {
       query: `
         mutation CreateTask($title: String!, $points: Int!, $deadline: String!, $familyID: String!) {
@@ -44,7 +43,6 @@ export const addNewTask = taskData => {
           return parsedRes.data.createTask.family._id;
         }
       })
-      .then(familyID => dispatch(fetchAllFamilyTasks(familyID)))
       .catch(err => {
         console.log(err);
       });
@@ -136,11 +134,11 @@ export const bookTask = (taskID, executorID) => {
     })
       .then(res => res.json())
       .then(parsedRes => {
-        if (!parsedRes.errors) {
-          return parsedRes.data.bookTask.family._id;
+        if (parsedRes.errors) {
+          console.log(parsedRes.errors);
         }
       })
-      .then(familyID => dispatch(fetchAllFamilyTasks(familyID)))
+
       .catch(err => {
         console.log(err);
       });

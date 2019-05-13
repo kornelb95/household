@@ -16,13 +16,11 @@
     "cors": "^2.8.5",
     "dataloader": "^1.4.0",
     "express": "^4.16.4",
-    "express-graphql": "^0.8.0",
     "graphql": "^14.3.0",
     "graphql-subscriptions": "^1.1.0",
     "jsonwebtoken": "^8.5.0",
     "mongoose": "^5.4.17",
-    "shortid": "^2.2.14",
-    "subscriptions-transport-ws": "^0.9.16"
+    "shortid": "^2.2.14"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"

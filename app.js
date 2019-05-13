@@ -1,9 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const { execute, subscribe } = require("graphql");
-const graphqlHttp = require("express-graphql");
-const { SubscriptionServer } = require("subscriptions-transport-ws");
 const mongoose = require("mongoose");
 const app = express();
 const typeDefs = require("./graphql/schema");
@@ -15,7 +12,6 @@ mongoose.set("useFindAndModify", false);
 app.use(bodyParser.json());
 app.use(cors());
 const PORT = 8000;
-app.use("*", cors({ origin: `http://localhost:${PORT}` }));
 app.use(isAuth);
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 const server = new ApolloServer({

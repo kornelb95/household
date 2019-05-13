@@ -1,15 +1,11 @@
-// const authResolver = require("./auth");
-// const familyResolver = require("./family");
-// const taskResolver = require("./task");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 const Family = require("../../models/Family");
 const { transformUser, transformFamily, transformTask } = require("./loaders");
-// const { PubSub } = require("graphql-subscriptions");
 const { PubSub } = require("apollo-server");
 const Task = require("../../models/Task");
-const TASK_ADDED = "TASK_ADDED";
+const TASK_REFRESH = "TASK_REFRESH";
 const pubsub = new PubSub();
 const resolvers = {
   Query: {
@@ -161,6 +157,7 @@ const resolvers = {
           { executor: executorID },
           { new: true }
         );
+        await pubsub.publish(TASK_REFRESH, { taskRefreshed: true });
         return transformTask(task);
       } catch (err) {
         throw err;
@@ -169,6 +166,7 @@ const resolvers = {
     deleteTask: async (parent, { taskID }) => {
       try {
         const task = await Task.findByIdAndDelete(taskID);
+        await pubsub.publish(TASK_REFRESH, { taskRefreshed: true });
         return true;
       } catch (err) {
         throw err;
@@ -181,7 +179,7 @@ const resolvers = {
           { toAccept: true },
           { new: true }
         );
-
+        await pubsub.publish(TASK_REFRESH, { taskRefreshed: true });
         return transformTask(updatedTask);
       } catch (err) {
         throw err;
@@ -197,6 +195,7 @@ const resolvers = {
           task.finished = true;
         }
         task.save();
+        await pubsub.publish(TASK_REFRESH, { taskRefreshed: true });
         return transformTask(task);
       } catch (err) {
         throw err;
@@ -213,7 +212,7 @@ const resolvers = {
       try {
         const createdTask = await task.save();
         const transformedTask = transformTask(createdTask);
-        await pubsub.publish(TASK_ADDED, { taskAdded: transformedTask });
+        await pubsub.publish(TASK_REFRESH, { taskRefreshed: true });
         return transformedTask;
       } catch (err) {
         throw err;
@@ -221,10 +220,10 @@ const resolvers = {
     }
   },
   Subscription: {
-    taskAdded: {
+    taskRefreshed: {
       subscribe: () => {
-        console.log("sub");
-        return pubsub.asyncIterator([TASK_ADDED]);
+        console.log("taskRefreshSub");
+        return pubsub.asyncIterator([TASK_REFRESH]);
       }
     }
   }

@@ -1,4 +1,3 @@
-// const { buildSchema } = require("graphql");
 const { gql } = require("apollo-server-express");
 const typeDefs = gql`
   type Task {
@@ -69,7 +68,7 @@ const typeDefs = gql`
   }
 
   type Subscription {
-    taskAdded: Task
+    taskRefreshed: Boolean
   }
 `;
 module.exports = typeDefs;
