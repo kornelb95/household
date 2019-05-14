@@ -3,10 +3,12 @@ import thunk from "redux-thunk";
 import userReducer from "./reducers/user";
 import uiReducer from "./reducers/ui";
 import taskReducer from "./reducers/task";
+import gameReducer from "./reducers/gameRoom";
 const rootReducer = combineReducers({
   user: userReducer,
   ui: uiReducer,
-  task: taskReducer
+  task: taskReducer,
+  game: gameReducer
 });
 
 let composeEnhancers = compose;

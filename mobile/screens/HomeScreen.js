@@ -17,15 +17,19 @@ import { connect } from "react-redux";
 import Header from "../components/Header";
 import { joinToFamily } from "../store/actions/user";
 import { fetchAllFamilyTasks } from "../store/actions/tasks";
-
+import configureSocket, { joinToRoom } from "../socket";
+import { NavigationEvents } from "react-navigation";
+// import configureSocket from "./socket";
 class HomeScreen extends Component {
   state = {
     visible: false,
     pin: ""
   };
   componentDidMount() {
+    // this.props.onConfigureSocket();
     if (this.props.family !== null) {
       this.props.onFetchAllFamilyTasks(this.props.family._id);
+      joinToRoom(this.props.loggedUser, this.props.family._id);
     }
   }
   _showDialog = () => this.setState({ visible: true });
@@ -36,6 +40,9 @@ class HomeScreen extends Component {
     const family = this.props.family;
     return (
       <ScrollView>
+        <NavigationEvents
+          onDidFocus={payload => this.props.onConfigureSocket().connect()}
+        />
         {this.props.isLoading ? (
           <View style={styles.container}>
             <ActivityIndicator />
@@ -262,7 +269,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onJoinToFamily: (userID, pin) => dispatch(joinToFamily(userID, pin)),
-    onFetchAllFamilyTasks: familyID => dispatch(fetchAllFamilyTasks(familyID))
+    onFetchAllFamilyTasks: familyID => dispatch(fetchAllFamilyTasks(familyID)),
+    onConfigureSocket: () => configureSocket(dispatch)
   };
 };
 export default connect(

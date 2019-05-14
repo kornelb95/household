@@ -37,15 +37,15 @@ export default createMaterialBottomTabNavigator(
           <Ionicons name="ios-list-box" color={tintColor} size={26} />
         )
       }
+    },
+    ArguesScreen: {
+      screen: Argues,
+      navigationOptions: {
+        tabBarIcon: ({ tintColor, focused }) => (
+          <Ionicons name="ios-rocket" color={tintColor} size={26} />
+        )
+      }
     }
-    // ArguesScreen: {
-    //   screen: Argues,
-    //   navigationOptions: {
-    //     tabBarIcon: ({ tintColor, focused }) => (
-    //       <Ionicons name="ios-rocket" color={tintColor} size={26} />
-    //     )
-    //   }
-    // }
   },
   {
     initialRouteName: "HomeScreen",

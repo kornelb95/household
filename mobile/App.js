@@ -14,6 +14,7 @@ import { HttpLink } from "apollo-link-http";
 import { WebSocketLink } from "apollo-link-ws";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { SubscriptionClient } from "subscriptions-transport-ws";
+import configureSocket from "./socket";
 const wsClient = new SubscriptionClient(`ws://192.168.1.12:8000/graphql`, {
   reconnect: true
 });
@@ -55,11 +56,11 @@ const theme = {
   }
 };
 const store = createStore();
+// export const socket = configureSocket(store.dispatch);
 export default class App extends React.Component {
   state = {
     isLoadingComplete: false
   };
-
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (

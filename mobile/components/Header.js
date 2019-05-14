@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Menu, Divider, TouchableRipple } from "react-native-paper";
 import { authLogout } from "../store/actions/user";
 import { connect } from "react-redux";
+import configureSocket, { disconnect } from "../socket";
 class Header extends Component {
   state = {
     visible: false
@@ -37,6 +38,7 @@ class Header extends Component {
           <Menu.Item
             style={{ color: "#000" }}
             onPress={() => {
+              disconnect();
               this.props.onLogout();
             }}
             title="Wyloguj"

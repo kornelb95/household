@@ -20,7 +20,8 @@
     "graphql-subscriptions": "^1.1.0",
     "jsonwebtoken": "^8.5.0",
     "mongoose": "^5.4.17",
-    "shortid": "^2.2.14"
+    "shortid": "^2.2.14",
+    "socket.io": "^2.2.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"

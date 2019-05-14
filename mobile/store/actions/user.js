@@ -211,6 +211,7 @@ export const authClearStorage = () => {
 export const authLogout = () => {
   return dispatch => {
     NavigationService.navigate("LoginScreen");
+    NavigationService.reset();
     dispatch(authClearStorage()).then(() => {
       dispatch(authRemoveToken());
     });

@@ -15,8 +15,13 @@ const mainStackNav = createStackNavigator({
 });
 
 export default createAppContainer(
-  createSwitchNavigator({
-    Main: mainStackNav,
-    Home: HomeTabNavigator
-  })
+  createSwitchNavigator(
+    {
+      Main: mainStackNav,
+      Home: HomeTabNavigator
+    },
+    {
+      resetOnBlur: true
+    }
+  )
 );

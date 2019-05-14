@@ -1,15 +1,9 @@
 import React, { Component } from "react";
-import {
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  Text,
-  ScrollView,
-  TouchableHighlight
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, StyleSheet, Text, ScrollView } from "react-native";
 import { connect } from "react-redux";
+import { List, TouchableRipple } from "react-native-paper";
 import Header from "../components/Header";
+import { Ionicons } from "@expo/vector-icons";
 class ArguesScreen extends Component {
   state = {};
   render() {
@@ -18,18 +12,41 @@ class ArguesScreen extends Component {
         <View style={styles.container}>
           <Header />
           <View style={styles.choresArea}>
-            <Text style={styles.addTaskText}>Dodaj zadanie</Text>
-            <TouchableHighlight
-              onPress={() => this.props.navigation.navigate("addTaskModal")}
-              style={styles.addTaskIconWrapper}
-            >
-              <Ionicons
-                style={styles.addTaskIcon}
-                name="ios-add-circle"
-                color="white"
-                size={32}
-              />
-            </TouchableHighlight>
+            <List.Section>
+              <List.Subheader style={{ fontSize: 20 }}>
+                Dostępni gracze
+              </List.Subheader>
+              {this.props.gameRoom
+                .filter(
+                  member => member.user.userId !== this.props.loggedUser.userId
+                )
+                .map(member => (
+                  <List.Item
+                    key={member.user.userId}
+                    title={member.user.name}
+                    right={props => (
+                      <View style={{ flexDirection: "row" }}>
+                        <TouchableRipple
+                          rippleColor="rgba(0, 0, 0, .32)"
+                          onPress={() => console.log("dasdasdas")}
+                          style={{
+                            fontSize: 30,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            paddingRight: 20
+                          }}
+                        >
+                          <Ionicons
+                            name="ios-rocket"
+                            color="#D916AB"
+                            size={24}
+                          />
+                        </TouchableRipple>
+                      </View>
+                    )}
+                  />
+                ))}
+            </List.Section>
           </View>
           <Text
             style={{
@@ -58,8 +75,6 @@ const styles = StyleSheet.create({
   choresArea: {
     height: 120,
     width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
     borderBottomWidth: 4,
     borderBottomColor: "white",
     justifyContent: "center"
@@ -87,7 +102,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   return {
     loggedUser: state.user.loggedUser,
-    isLoading: state.ui.isLoading
+    isLoading: state.ui.isLoading,
+    gameRoom: state.game.roomMembers
   };
 };
 

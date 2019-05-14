@@ -1,4 +1,4 @@
-import { NavigationActions } from "react-navigation";
+import { NavigationActions, StackActions } from "react-navigation";
 
 let _navigator;
 
@@ -17,8 +17,17 @@ function navigate(routeName, params) {
 function back() {
   _navigator.dispatch(NavigationActions.back());
 }
+function reset() {
+  _navigator.dispatch(
+    StackActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: "MainScreen" })]
+    })
+  );
+}
 export default {
   navigate,
   setTopLevelNavigator,
-  back
+  back,
+  reset
 };
