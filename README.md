@@ -48,4 +48,4 @@ Mobile App:
 ### TO DO
 * Rock, paper, scissors mini-game in order to select a person for the some task
 * Sending jwt to API and secure some graphQL resolvers
-*Ranking
+* Ranking
