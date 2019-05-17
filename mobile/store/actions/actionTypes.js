@@ -10,3 +10,4 @@ export const DELETE_TASK = "DELETE_TASK";
 export const TO_ACCEPT_TASK = "TO_ACCEPT_TASK";
 export const ACCEPT_TASK = "ACCEPT_TASK";
 export const UPDATE_ROOM = "UPDATE_ROOM";
+export const START_GAME = "START_GAME";

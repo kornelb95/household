@@ -222,7 +222,6 @@ const resolvers = {
   Subscription: {
     taskRefreshed: {
       subscribe: () => {
-        console.log("taskRefreshSub");
         return pubsub.asyncIterator([TASK_REFRESH]);
       }
     }

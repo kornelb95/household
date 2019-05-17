@@ -158,50 +158,51 @@ class HomeScreen extends Component {
               Statystyki
             </Text>
             <View style={styles.statsContainer}>
-              {this.props.family.members.map(member => {
-                return (
-                  <DataTable key={member._id} style={styles.memberStats}>
-                    <DataTable.Header style={{ color: "#000" }}>
-                      <DataTable.Title style={{ color: "#000" }}>
-                        {member.name}
-                      </DataTable.Title>
-                    </DataTable.Header>
+              {this.props.family &&
+                this.props.family.members.map(member => {
+                  return (
+                    <DataTable key={member._id} style={styles.memberStats}>
+                      <DataTable.Header style={{ color: "#000" }}>
+                        <DataTable.Title style={{ color: "#000" }}>
+                          {member.name}
+                        </DataTable.Title>
+                      </DataTable.Header>
 
-                    <DataTable.Row style={{ color: "#000" }}>
-                      <DataTable.Cell style={{ color: "#000" }}>
-                        Ukończone zadania
-                      </DataTable.Cell>
-                      <DataTable.Cell numeric>
-                        {
-                          this.props.tasks.filter(task => {
-                            if (task.executor !== null) {
-                              if (member._id === task.executor._id) {
-                                return task.finished;
+                      <DataTable.Row style={{ color: "#000" }}>
+                        <DataTable.Cell style={{ color: "#000" }}>
+                          Ukończone zadania
+                        </DataTable.Cell>
+                        <DataTable.Cell numeric>
+                          {
+                            this.props.tasks.filter(task => {
+                              if (task.executor !== null) {
+                                if (member._id === task.executor._id) {
+                                  return task.finished;
+                                }
                               }
-                            }
-                          }).length
-                        }
-                      </DataTable.Cell>
-                    </DataTable.Row>
-                    <DataTable.Row style={{ color: "#000" }}>
-                      <DataTable.Cell style={{ color: "#000" }}>
-                        Zadania do zrobienia
-                      </DataTable.Cell>
-                      <DataTable.Cell numeric>
-                        {
-                          this.props.tasks.filter(task => {
-                            if (task.executor !== null) {
-                              if (member._id === task.executor._id) {
-                                return !task.finished;
+                            }).length
+                          }
+                        </DataTable.Cell>
+                      </DataTable.Row>
+                      <DataTable.Row style={{ color: "#000" }}>
+                        <DataTable.Cell style={{ color: "#000" }}>
+                          Zadania do zrobienia
+                        </DataTable.Cell>
+                        <DataTable.Cell numeric>
+                          {
+                            this.props.tasks.filter(task => {
+                              if (task.executor !== null) {
+                                if (member._id === task.executor._id) {
+                                  return !task.finished;
+                                }
                               }
-                            }
-                          }).length
-                        }
-                      </DataTable.Cell>
-                    </DataTable.Row>
-                  </DataTable>
-                );
-              })}
+                            }).length
+                          }
+                        </DataTable.Cell>
+                      </DataTable.Row>
+                    </DataTable>
+                  );
+                })}
             </View>
           </View>
         )}

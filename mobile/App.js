@@ -14,7 +14,6 @@ import { HttpLink } from "apollo-link-http";
 import { WebSocketLink } from "apollo-link-ws";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { SubscriptionClient } from "subscriptions-transport-ws";
-import configureSocket from "./socket";
 const wsClient = new SubscriptionClient(`ws://192.168.1.12:8000/graphql`, {
   reconnect: true
 });
@@ -94,7 +93,8 @@ export default class App extends React.Component {
       Asset.loadAsync([]),
       Font.loadAsync({
         ...Icon.Ionicons.font,
-        "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf")
+        "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf"),
+        "amatic-font": require("./assets/fonts/AmaticSC-Regular.ttf")
       })
     ]);
   };

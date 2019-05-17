@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import ChoresScreen from "../screens/ChoresScreen";
 import addTaskModal from "../screens/addTaskModal";
+import GameScreen from "../screens/GameScreen";
 import Argues from "../screens/Argues";
 const choresAddTaskModalStack = createStackNavigator(
   {
@@ -13,6 +14,9 @@ const choresAddTaskModalStack = createStackNavigator(
     },
     addTaskModal: {
       screen: addTaskModal
+    },
+    GameScreen: {
+      screen: GameScreen
     }
   },
   {

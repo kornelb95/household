@@ -4,6 +4,8 @@ import { connect } from "react-redux";
 import { List, TouchableRipple } from "react-native-paper";
 import Header from "../components/Header";
 import { Ionicons } from "@expo/vector-icons";
+import { startGameEmit } from "../socket";
+import { startGame } from "../store/actions/game";
 class ArguesScreen extends Component {
   state = {};
   render() {
@@ -16,7 +18,7 @@ class ArguesScreen extends Component {
               <List.Subheader style={{ fontSize: 20 }}>
                 Dostępni gracze
               </List.Subheader>
-              {this.props.gameRoom
+              {this.props.gameRoom.roomMembers
                 .filter(
                   member => member.user.userId !== this.props.loggedUser.userId
                 )
@@ -28,7 +30,18 @@ class ArguesScreen extends Component {
                       <View style={{ flexDirection: "row" }}>
                         <TouchableRipple
                           rippleColor="rgba(0, 0, 0, .32)"
-                          onPress={() => console.log("dasdasdas")}
+                          onPress={() => {
+                            startGameEmit(
+                              this.props.gameRoom.roomMembers.find(
+                                member =>
+                                  member.user.userId ===
+                                  this.props.loggedUser.userId
+                              ),
+                              member
+                            );
+                            this.props.onStartGame();
+                          }}
+                          disabled={this.props.gameRoom.isGame}
                           style={{
                             fontSize: 30,
                             justifyContent: "center",
@@ -103,12 +116,14 @@ const mapStateToProps = state => {
   return {
     loggedUser: state.user.loggedUser,
     isLoading: state.ui.isLoading,
-    gameRoom: state.game.roomMembers
+    gameRoom: state.game
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return {
+    onStartGame: () => dispatch(startGame())
+  };
 };
 export default connect(
   mapStateToProps,

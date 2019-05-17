@@ -27,18 +27,23 @@ let rooms = {};
 io.on("connection", socket => {
   let socketFamily;
   socket.on("JOIN_TO_ROOM", (user, familyID) => {
+    if (rooms[familyID] && rooms[familyID].length >= 2) {
+      return false;
+    }
     socketFamily = familyID;
     socket.join(familyID, () => {
       if (rooms.hasOwnProperty(familyID)) {
         rooms[familyID].push({
           user,
-          socketID: socket.id
+          socketID: socket.id,
+          points: 0
         });
       } else {
         rooms[familyID] = [];
         rooms[familyID].push({
           user,
-          socketID: socket.id
+          socketID: socket.id,
+          points: 0
         });
       }
       io.to(familyID).emit("ROOMS_UPDATE", rooms[familyID]);
@@ -46,8 +51,15 @@ io.on("connection", socket => {
   });
   socket.on("disconnect", () => {
     const myRoom = rooms[socketFamily];
-    rooms[socketFamily] = myRoom.filter(user => user.socketID !== socket.id);
+    if (myRoom !== undefined) {
+      rooms[socketFamily] = myRoom.filter(user => user.socketID !== socket.id);
+    }
+
     io.to(socketFamily).emit("ROOMS_UPDATE", rooms[socketFamily]);
+  });
+  socket.on("START_GAME", (me, opponent) => {
+    console.log(opponent.socketID);
+    io.to(opponent.socketID).emit("GAME_STARTED", me);
   });
 });
 
