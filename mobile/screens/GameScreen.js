@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, Image } from "react-native";
 import { connect } from "react-redux";
-
+import { TouchableRipple } from "react-native-paper";
+import { makeChoice } from "../socket";
 class GameScreen extends React.Component {
   render() {
     const me = this.props.gameRoom.roomMembers.filter(
@@ -35,6 +36,16 @@ class GameScreen extends React.Component {
             color: "#fff"
           }}
         >{`${me.points} : ${opponent.points}`}</Text>
+        <Text
+          style={{
+            textAlign: "center",
+            fontFamily: "amatic-font",
+            fontSize: 45,
+            color: "#fff"
+          }}
+        >
+          {this.props.gameRoom.action}
+        </Text>
         <View
           style={{
             alignContent: "flex-end",
@@ -43,18 +54,33 @@ class GameScreen extends React.Component {
             marginBottom: 30
           }}
         >
-          <Image
-            style={{ width: 60, height: 60 }}
-            source={require("../assets/images/paper.png")}
-          />
-          <Image
-            style={{ width: 60, height: 60 }}
-            source={require("../assets/images/rock.png")}
-          />
-          <Image
-            style={{ width: 60, height: 60 }}
-            source={require("../assets/images/scissors.png")}
-          />
+          <TouchableRipple
+            onPress={() => makeChoice("paper", me)}
+            rippleColor="rgba(200, 200, 200, .32)"
+          >
+            <Image
+              style={{ width: 60, height: 60 }}
+              source={require("../assets/images/paper.png")}
+            />
+          </TouchableRipple>
+          <TouchableRipple
+            onPress={() => makeChoice("rock", me)}
+            rippleColor="rgba(200, 200, 200, .32)"
+          >
+            <Image
+              style={{ width: 60, height: 60 }}
+              source={require("../assets/images/rock.png")}
+            />
+          </TouchableRipple>
+          <TouchableRipple
+            onPress={() => makeChoice("scissors", me)}
+            rippleColor="rgba(200, 200, 200, .32)"
+          >
+            <Image
+              style={{ width: 60, height: 60 }}
+              source={require("../assets/images/scissors.png")}
+            />
+          </TouchableRipple>
         </View>
       </View>
     );

@@ -15,6 +15,12 @@ const configureSocket = dispatch => {
     dispatch({ type: "START_GAME" });
     NavigationService.navigate("GameScreen");
   });
+  socket.on("remis", room => {
+    dispatch({ type: "REMIS" });
+  });
+  socket.on("resolved", (winner, looser) => {
+    dispatch({ type: "RESOLVED", payload: { winner, looser } });
+  });
   return socket;
 };
 
@@ -26,5 +32,8 @@ export const disconnect = () => {
 };
 export const startGameEmit = (me, opponent) => {
   socket.emit("START_GAME", me, opponent);
+};
+export const makeChoice = (choice, me) => {
+  socket.emit("CHOICE", choice, me);
 };
 export default configureSocket;

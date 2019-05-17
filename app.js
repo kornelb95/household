@@ -58,8 +58,88 @@ io.on("connection", socket => {
     io.to(socketFamily).emit("ROOMS_UPDATE", rooms[socketFamily]);
   });
   socket.on("START_GAME", (me, opponent) => {
-    console.log(opponent.socketID);
     io.to(opponent.socketID).emit("GAME_STARTED", me);
+  });
+  choices = [];
+  socket.on("CHOICE", (choice, user) => {
+    const found = choices.find(el => el.user.socketID === socket.id);
+    if (found === undefined) {
+      choices.push({
+        user,
+        choice
+      });
+    }
+
+    if (choices.length === 2) {
+      switch (choices[0]["choice"]) {
+        case "rock":
+          switch (choices[1]["choice"]) {
+            case "rock":
+              io.emit("remis");
+              break;
+
+            case "paper":
+              choices[1].user.points++;
+              io.emit("resolved", choices[1].user, choices[0].user);
+              break;
+
+            case "scissors":
+              choices[0].user.points++;
+              io.emit("resolved", choices[0].user, choices[1].user);
+              break;
+
+            default:
+              break;
+          }
+          break;
+
+        case "paper":
+          switch (choices[1]["choice"]) {
+            case "rock":
+              choices[0].user.points++;
+              io.emit("resolved", choices[0].user, choices[1].user);
+              break;
+
+            case "paper":
+              io.emit("remis");
+              break;
+
+            case "scissors":
+              choices[1].user.points++;
+              io.emit("resolved", choices[1].user, choices[0].user);
+              break;
+
+            default:
+              break;
+          }
+          break;
+
+        case "scissors":
+          switch (choices[1]["choice"]) {
+            case "rock":
+              choices[1].user.points++;
+              io.emit("resolved", choices[1].user, choices[0].user);
+              break;
+
+            case "paper":
+              choices[0].user.points++;
+              io.emit("resolved", choices[0].user, choices[1].user);
+              break;
+
+            case "scissors":
+              io.emit("remis");
+              break;
+
+            default:
+              break;
+          }
+          break;
+
+        default:
+          break;
+      }
+      choices = [];
+    }
   });
 });
 
