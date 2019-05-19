@@ -15,11 +15,26 @@ const configureSocket = dispatch => {
     dispatch({ type: "START_GAME" });
     NavigationService.navigate("GameScreen");
   });
-  socket.on("remis", room => {
-    dispatch({ type: "REMIS" });
+  socket.on("remis", (choice1, choice2) => {
+    dispatch({
+      type: "REMIS",
+      payload: { user1: choice1.user, user2: choice2.user }
+    });
   });
   socket.on("resolved", (winner, looser) => {
-    dispatch({ type: "RESOLVED", payload: { winner, looser } });
+    dispatch({
+      type: "RESOLVED",
+      payload: { winner: winner.user, looser: looser.user }
+    });
+  });
+  socket.on("gameover", winner => {
+    console.log("gameover");
+
+    dispatch({ type: "GAME_OVER", payload: winner });
+    setTimeout(() => {
+      NavigationService.pop();
+      dispatch({ type: "CLEAR_GAMEROOM" });
+    }, 3000);
   });
   return socket;
 };

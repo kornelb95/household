@@ -13,3 +13,6 @@ export const UPDATE_ROOM = "UPDATE_ROOM";
 export const START_GAME = "START_GAME";
 export const REMIS = "REMIS";
 export const RESOLVED = "RESOLVED";
+export const GAME_OVER = "GAME_OVER";
+export const CLEAR_GAMEROOM = "CLEAR_GAMEROOM";
+export const CHOOSE_TASK_FOR_GAME = "CHOOSE_TASK_FOR_GAME";

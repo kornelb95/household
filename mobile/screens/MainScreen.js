@@ -21,7 +21,7 @@ class MainScreen extends Component {
       >
         <View style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.headerText}>Family Connector</Text>
+            <Text style={styles.headerText}>Task App</Text>
           </View>
           <View style={styles.buttonsContainer}>
             <View style={styles.button}>

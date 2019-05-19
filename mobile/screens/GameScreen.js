@@ -1,16 +1,25 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Animated } from "react-native";
 import { connect } from "react-redux";
 import { TouchableRipple } from "react-native-paper";
 import { makeChoice } from "../socket";
 class GameScreen extends React.Component {
   render() {
-    const me = this.props.gameRoom.roomMembers.filter(
-      member => member.user.userId === this.props.loggedUser.userId
-    )[0];
-    let opponent = this.props.gameRoom.roomMembers.filter(
-      member => member.user.userId !== this.props.loggedUser.userId
-    )[0];
+    const me =
+      this.props.gameRoom &&
+      this.props.gameRoom.roomMembers.filter(
+        member => member.user.userId === this.props.loggedUser.userId
+      )[0];
+    let opponent =
+      this.props.gameRoom &&
+      this.props.gameRoom.roomMembers.filter(
+        member => member.user.userId !== this.props.loggedUser.userId
+      )[0];
+    const fadeAnim = new Animated.Value(1);
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 3000
+    }).start();
     return (
       <View
         style={{
@@ -28,6 +37,7 @@ class GameScreen extends React.Component {
             color: "#fff"
           }}
         >{`${me.user.name} vs ${opponent.user.name}`}</Text>
+
         <Text
           style={{
             textAlign: "center",
@@ -36,16 +46,61 @@ class GameScreen extends React.Component {
             color: "#fff"
           }}
         >{`${me.points} : ${opponent.points}`}</Text>
-        <Text
+
+        <Animated.View
+          style={{
+            ...this.props.style,
+            opacity: fadeAnim,
+            flexDirection: "row",
+            justifyContent: "space-around"
+          }}
+        >
+          {me.choice === "rock" ? (
+            <Image
+              style={{ width: 60, height: 60 }}
+              source={require("../assets/images/rock.png")}
+            />
+          ) : me.choice === "paper" ? (
+            <Image
+              style={{ width: 60, height: 60 }}
+              source={require("../assets/images/paper.png")}
+            />
+          ) : me.choice ? (
+            <Image
+              style={{ width: 60, height: 60 }}
+              source={require("../assets/images/scissors.png")}
+            />
+          ) : null}
+          {opponent.choice === "rock" ? (
+            <Image
+              style={{ width: 60, height: 60 }}
+              source={require("../assets/images/rock.png")}
+            />
+          ) : me.choice === "paper" ? (
+            <Image
+              style={{ width: 60, height: 60 }}
+              source={require("../assets/images/paper.png")}
+            />
+          ) : opponent.choice ? (
+            <Image
+              style={{ width: 60, height: 60 }}
+              source={require("../assets/images/scissors.png")}
+            />
+          ) : null}
+        </Animated.View>
+
+        <Animated.Text
           style={{
             textAlign: "center",
             fontFamily: "amatic-font",
             fontSize: 45,
-            color: "#fff"
+            color: "#fff",
+            opacity: fadeAnim
           }}
         >
           {this.props.gameRoom.action}
-        </Text>
+        </Animated.Text>
+
         <View
           style={{
             alignContent: "flex-end",

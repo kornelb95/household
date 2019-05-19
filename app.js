@@ -64,6 +64,7 @@ io.on("connection", socket => {
   socket.on("CHOICE", (choice, user) => {
     const found = choices.find(el => el.user.socketID === socket.id);
     if (found === undefined) {
+      user.choice = choice;
       choices.push({
         user,
         choice
@@ -75,17 +76,17 @@ io.on("connection", socket => {
         case "rock":
           switch (choices[1]["choice"]) {
             case "rock":
-              io.emit("remis");
+              io.emit("remis", choices[0], choices[1]);
               break;
 
             case "paper":
               choices[1].user.points++;
-              io.emit("resolved", choices[1].user, choices[0].user);
+              io.emit("resolved", choices[1], choices[0]);
               break;
 
             case "scissors":
               choices[0].user.points++;
-              io.emit("resolved", choices[0].user, choices[1].user);
+              io.emit("resolved", choices[0], choices[1]);
               break;
 
             default:
@@ -97,16 +98,16 @@ io.on("connection", socket => {
           switch (choices[1]["choice"]) {
             case "rock":
               choices[0].user.points++;
-              io.emit("resolved", choices[0].user, choices[1].user);
+              io.emit("resolved", choices[0], choices[1]);
               break;
 
             case "paper":
-              io.emit("remis");
+              io.emit("remis", choices[0], choices[1]);
               break;
 
             case "scissors":
               choices[1].user.points++;
-              io.emit("resolved", choices[1].user, choices[0].user);
+              io.emit("resolved", choices[1], choices[0]);
               break;
 
             default:
@@ -118,16 +119,16 @@ io.on("connection", socket => {
           switch (choices[1]["choice"]) {
             case "rock":
               choices[1].user.points++;
-              io.emit("resolved", choices[1].user, choices[0].user);
+              io.emit("resolved", choices[1], choices[0]);
               break;
 
             case "paper":
               choices[0].user.points++;
-              io.emit("resolved", choices[0].user, choices[1].user);
+              io.emit("resolved", choices[0], choices[1]);
               break;
 
             case "scissors":
-              io.emit("remis");
+              io.emit("remis", choices[0], choices[1]);
               break;
 
             default:
@@ -137,6 +138,16 @@ io.on("connection", socket => {
 
         default:
           break;
+      }
+      if (choices[0].user.points === 5) {
+        choices[0].user.points = 0;
+        choices[1].user.points = 0;
+        io.emit("gameover", choices[0].user);
+      }
+      if (choices[1].user.points === 5) {
+        choices[0].user.points = 0;
+        choices[1].user.points = 0;
+        io.emit("gameover", choices[1].user);
       }
       choices = [];
     }
