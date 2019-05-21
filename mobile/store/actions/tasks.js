@@ -6,7 +6,7 @@ import {
   TO_ACCEPT_TASK,
   ACCEPT_TASK
 } from "./actionTypes";
-const uri = "http://192.168.1.12:8000/graphql";
+const uri = "https://taskappapi1.herokuapp.com:8000/graphql";
 export const addNewTask = ({ points, title, deadline, familyID }) => {
   return dispatch => {
     const requestBody = {

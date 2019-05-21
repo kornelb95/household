@@ -9,7 +9,7 @@ import {
   AUTH_SET_TOKEN,
   JOIN_TO_FAMILY
 } from "./actionTypes";
-const uri = "http://192.168.1.12:8000/graphql";
+const uri = "https://taskappapi1.herokuapp.com:8000/graphql";
 export const signup = userData => {
   return dispatch => {
     dispatch(uiStartLoading());
