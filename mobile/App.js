@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { AppLoading, Asset, Font, Icon } from "expo";
+import { AppLoading, Asset, Font, Icon, Permissions } from "expo";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
 import AppNavigator from "./navigation/AppNavigator";
 import NavigationService from "./navigation/NavigationService";
@@ -14,11 +14,14 @@ import { HttpLink } from "apollo-link-http";
 import { WebSocketLink } from "apollo-link-ws";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { SubscriptionClient } from "subscriptions-transport-ws";
-const wsClient = new SubscriptionClient(`ws://192.168.1.12:8000/graphql`, {
-  reconnect: true
-});
+const wsClient = new SubscriptionClient(
+  `ws://servertaskapp.herokuapp.com/graphql`,
+  {
+    reconnect: true
+  }
+);
 const httpLink = new HttpLink({
-  uri: "http://192.168.1.12:8000/graphql"
+  uri: "https://servertaskapp.herokuapp.com/graphql"
 });
 const webSocketLink = new WebSocketLink(wsClient);
 const requestLink = ({ queryOrMutationLink, subscriptionLink }) =>
@@ -60,6 +63,9 @@ export default class App extends React.Component {
   state = {
     isLoadingComplete: false
   };
+  async componentDidMount() {
+    await Permissions.askAsync(Permissions.NOTIFICATIONS);
+  }
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (

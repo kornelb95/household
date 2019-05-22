@@ -3,7 +3,6 @@ import { View, StyleSheet, Text, ScrollView } from "react-native";
 import { connect } from "react-redux";
 import { List, TouchableRipple } from "react-native-paper";
 import Header from "../components/Header";
-import moment from "moment";
 import { Ionicons } from "@expo/vector-icons";
 import { startGameEmit } from "../socket";
 import { startGame } from "../store/actions/game";
@@ -22,7 +21,8 @@ class ArguesScreen extends Component {
               textAlign: "center",
               fontSize: 20,
               color: "#fff",
-              lineHeight: 24
+              lineHeight: 24,
+              marginTop: 20
             }}
           >
             Wybierz zadanie do gry
@@ -90,7 +90,10 @@ class ArguesScreen extends Component {
                             );
                             this.props.onStartGame();
                           }}
-                          disabled={this.props.gameRoom.isGame}
+                          disabled={
+                            this.props.gameRoom.isGame ||
+                            this.props.gameRoom.task === {}
+                          }
                           style={{
                             fontSize: 30,
                             justifyContent: "center",

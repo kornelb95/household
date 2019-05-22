@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 import NavigationService from "./navigation/NavigationService";
-const socket = io("http://192.168.1.12:8000");
+const socket = io("https://servertaskapp.herokuapp.com");
 
 const configureSocket = dispatch => {
   socket.on("connect", () => {

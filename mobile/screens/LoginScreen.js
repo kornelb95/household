@@ -18,7 +18,7 @@ class LoginScreen extends Component {
   state = {
     inputs: {
       email: {
-        value: "korni007@gmail.com",
+        value: "",
         valid: false,
         validationRules: {
           isEmail: true
@@ -26,7 +26,7 @@ class LoginScreen extends Component {
         touched: false
       },
       password: {
-        value: "f0d3f252",
+        value: "",
         valid: false,
         validationRules: {
           minLength: 6

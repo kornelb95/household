@@ -167,7 +167,23 @@ class HomeScreen extends Component {
                           {member.name}
                         </DataTable.Title>
                       </DataTable.Header>
-
+                      <DataTable.Row style={{ color: "#000" }}>
+                        <DataTable.Cell style={{ color: "#000" }}>
+                          Punkty
+                        </DataTable.Cell>
+                        <DataTable.Cell numeric>
+                          {this.props.tasks
+                            .filter(task => {
+                              if (task.executor !== null) {
+                                if (member._id === task.executor._id) {
+                                  return task.finished;
+                                }
+                              }
+                            })
+                            .map(task => task.points)
+                            .reduce((prev, curr) => prev + curr, 0)}
+                        </DataTable.Cell>
+                      </DataTable.Row>
                       <DataTable.Row style={{ color: "#000" }}>
                         <DataTable.Cell style={{ color: "#000" }}>
                           Ukończone zadania
@@ -229,8 +245,8 @@ const styles = StyleSheet.create({
   },
   userName: {
     color: "white",
-    lineHeight: 30,
-    fontSize: 30,
+    lineHeight: 20,
+    fontSize: 20,
     fontStyle: "italic",
     textAlign: "center",
     flex: 1,

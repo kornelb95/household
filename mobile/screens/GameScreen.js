@@ -76,7 +76,7 @@ class GameScreen extends React.Component {
               style={{ width: 60, height: 60 }}
               source={require("../assets/images/rock.png")}
             />
-          ) : me.choice === "paper" ? (
+          ) : opponent.choice === "paper" ? (
             <Image
               style={{ width: 60, height: 60 }}
               source={require("../assets/images/paper.png")}
