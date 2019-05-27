@@ -117,83 +117,87 @@ class SignupScreen extends Component {
 
   render() {
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.inputContainer}>
-          {this.props.user.error !== "" ? (
-            <View style={{ alignItems: "center" }}>
-              <Text style={styles.errorText}>{this.props.user.error}</Text>
-            </View>
-          ) : null}
-          <DefaultTextInput
-            value={this.state.inputs.email.value}
-            placeholder="Wpisz adres email"
-            keyboardType="email-address"
-            onChangeText={value => this.updateStateInput("email", value)}
-            valid={this.state.inputs.email.valid}
-            touched={this.state.inputs.email.touched}
-          />
-          <DefaultTextInput
-            value={this.state.inputs.password.value}
-            secureTextEntry
-            placeholder="Wpisz hasło"
-            onChangeText={value => this.updateStateInput("password", value)}
-            valid={this.state.inputs.password.valid}
-            touched={this.state.inputs.password.touched}
-          />
-          <DefaultTextInput
-            value={this.state.inputs.password2.value}
-            placeholder="Powtórz hasło"
-            secureTextEntry
-            onChangeText={value => this.updateStateInput("password2", value)}
-            valid={this.state.inputs.password2.valid}
-            touched={this.state.inputs.password2.touched}
-          />
-          <DefaultTextInput
-            value={this.state.inputs.name.value}
-            placeholder="Twoje imię"
-            onChangeText={value => this.updateStateInput("name", value)}
-            valid={this.state.inputs.name.valid}
-            touched={this.state.inputs.name.touched}
-          />
-        </View>
-        <View>
-          <View style={styles.switchContainer}>
-            <Text style={styles.switchText}>Czy chcesz założyć rodzinę?</Text>
-            <Switch
-              value={this.state.inputs.isFamilyCreating.value}
-              onValueChange={value =>
-                this.updateStateInput("isFamilyCreating", value)
-              }
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.inputContainer}>
+            {this.props.user.error !== "" ? (
+              <View style={{ alignItems: "center" }}>
+                <Text style={styles.errorText}>{this.props.user.error}</Text>
+              </View>
+            ) : null}
+            <DefaultTextInput
+              value={this.state.inputs.email.value}
+              placeholder="Wpisz adres email"
+              keyboardType="email-address"
+              onChangeText={value => this.updateStateInput("email", value)}
+              valid={this.state.inputs.email.valid}
+              touched={this.state.inputs.email.touched}
+            />
+            <DefaultTextInput
+              value={this.state.inputs.password.value}
+              secureTextEntry
+              placeholder="Wpisz hasło"
+              onChangeText={value => this.updateStateInput("password", value)}
+              valid={this.state.inputs.password.valid}
+              touched={this.state.inputs.password.touched}
+            />
+            <DefaultTextInput
+              value={this.state.inputs.password2.value}
+              placeholder="Powtórz hasło"
+              secureTextEntry
+              onChangeText={value => this.updateStateInput("password2", value)}
+              valid={this.state.inputs.password2.valid}
+              touched={this.state.inputs.password2.touched}
+            />
+            <DefaultTextInput
+              value={this.state.inputs.name.value}
+              placeholder="Twoje imię"
+              onChangeText={value => this.updateStateInput("name", value)}
+              valid={this.state.inputs.name.valid}
+              touched={this.state.inputs.name.touched}
             />
           </View>
-          {this.state.inputs.isFamilyCreating.value && (
+          <View>
+            <View style={styles.switchContainer}>
+              <Text style={styles.switchText}>Czy chcesz założyć rodzinę?</Text>
+              <Switch
+                value={this.state.inputs.isFamilyCreating.value}
+                onValueChange={value =>
+                  this.updateStateInput("isFamilyCreating", value)
+                }
+              />
+            </View>
+
             <DefaultTextInput
               value={this.state.inputs.familyName.value}
               placeholder="Nazwa twojej rodziny"
               onChangeText={value => this.updateStateInput("familyName", value)}
-              valid={this.state.inputs.familyName.valid}
-              touched={this.state.inputs.familyName.touched}
-            />
-          )}
-        </View>
-        <View style={styles.buttonContainer}>
-          {this.props.isLoading ? (
-            <ActivityIndicator />
-          ) : (
-            <Button
-              disabled={
-                !this.state.inputs.email.valid ||
-                !this.state.inputs.password.valid ||
-                !this.state.inputs.password2.valid ||
-                !this.state.inputs.name.valid
+              valid={
+                !this.state.inputs.isFamilyCreating.value ||
+                this.state.inputs.familyName.valid
               }
-              onPress={() => this.props.onSignup(this.state.inputs)}
-              mode="contained"
-              color="#D916AB"
-            >
-              Załóż konto
-            </Button>
-          )}
+              touched={this.state.inputs.familyName.touched}
+              disabled={!this.state.inputs.isFamilyCreating.value}
+            />
+            {this.props.isLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <Button
+                disabled={
+                  !this.state.inputs.email.valid ||
+                  !this.state.inputs.password.valid ||
+                  !this.state.inputs.password2.valid ||
+                  !this.state.inputs.name.valid
+                }
+                onPress={() => this.props.onSignup(this.state.inputs)}
+                mode="contained"
+                color="#D916AB"
+              >
+                Załóż konto
+              </Button>
+            )}
+          </View>
+          <View style={styles.buttonContainer} />
         </View>
       </ScrollView>
     );
@@ -203,7 +207,6 @@ class SignupScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start",
     backgroundColor: "#12B2AF"
   },
   errorText: {
@@ -211,13 +214,11 @@ const styles = StyleSheet.create({
     color: "#f00"
   },
   buttonContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     marginBottom: "10%"
   },
   inputContainer: {
-    justifyContent: "space-around"
+    justifyContent: "space-around",
+    flex: 1
   },
   switchContainer: {
     alignItems: "center",
