@@ -44,8 +44,8 @@ Mobile App:
 * Realtime Data: I will make changes, you will see it immediately
 * Two roles: Creator and member
 * Sum up of ended tasks and points
-
-### TO DO
 * Rock, paper, scissors mini-game in order to select a person for the some task
 * Sending jwt to API and secure some graphQL resolvers
 * Ranking
+
+
