@@ -2,6 +2,10 @@
 
 Mobile app for managing house chores with gamification elements
 
+### Run
+Android .apk https://expo.io/artifacts/c51d9340-748f-4ad0-a4cd-983b92d710a5
+Serwer hosted by Heroku
+
 ### Installation
 
 Server:
