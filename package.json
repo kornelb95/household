@@ -20,7 +20,7 @@
     "graphql": "^14.3.0",
     "graphql-subscriptions": "^1.1.0",
     "jsonwebtoken": "^8.5.0",
-    "mongoose": "^5.4.17",
+    "mongoose": "^5.7.5",
     "shortid": "^2.2.14",
     "socket.io": "^2.2.0"
   },
