@@ -18,7 +18,7 @@
     "apollo-link": "^1.2.11",
     "apollo-link-http": "^1.5.14",
     "apollo-link-ws": "^1.0.17",
-    "expo": "^32.0.0",
+    "expo": "^46.0.14",
     "graphql": "^14.2.1",
     "graphql-tag": "^2.10.1",
     "jwt-decode": "^2.2.0",
